@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grandma's Recipe Box</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:       #fdf6ec;
+      --parchment:   #f5e9d3;
+      --warm-brown:  #7b4f2e;
+      --dark-brown:  #3e2010;
+      --rust:        #c0502a;
+      --sage:        #6b7c5c;
+      --honey:       #d4933a;
+      --border:      #c9a97a;
+      --shadow:      rgba(62,32,16,0.12);
+    }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(ellipse at 20% 10%, #ffe8c840 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, #d4933a18 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a97a' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      color: var(--dark-brown);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--warm-brown) 0%, #5c3318 100%);
+      padding: 28px 40px 22px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M40 0C17.9 0 0 17.9 0 40s17.9 40 40 40 40-17.9 40-40S62.1 0 40 0zm0 70C23.4 70 10 56.6 10 40S23.4 10 40 10s30 13.4 30 30-13.4 30-30 30z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .header-decor {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1rem;
+      color: var(--honey);
+      letter-spacing: 3px;
+      margin-bottom: 6px;
+      opacity: 0.9;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--cream);
+      font-weight: 700;
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+    header h1 span { color: var(--honey); font-style: italic; }
+    .header-sub {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      color: #e8d4b8;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+    /* decorative border lines */
+    .header-line {
+      display: flex; align-items: center; gap: 12px;
+      margin: 14px auto 0; max-width: 400px;
+    }
+    .header-line span { flex: 1; height: 1px; background: var(--honey); opacity: 0.5; }
+    .header-line i { color: var(--honey); font-size: 1.1rem; }
+
+    /* ── NAV TABS ── */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: var(--parchment);
+      border-bottom: 2px solid var(--border);
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--warm-brown);
+      background: none;
+      border: none;
+      padding: 14px 28px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--rust); background: #fff8f0; }
+    .tab-btn.active {
+      color: var(--rust);
+      border-bottom-color: var(--rust);
+      background: var(--cream);
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 36px 24px 60px; }
+
+    /* ── SECTION ── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 36px;
+      box-shadow: 0 6px 28px var(--shadow);
+      position: relative;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--rust), var(--honey), var(--sage));
+      border-radius: 12px 12px 0 0;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--warm-brown);
+      margin-bottom: 6px;
+    }
+    .section-title span { font-style: italic; color: var(--rust); }
+    .section-desc {
+      font-style: italic;
+      color: #7a6048;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    /* ── FORM ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--warm-brown);
+      letter-spacing: 0.3px;
+    }
+    label .required { color: var(--rust); }
+    input[type="text"], input[type="number"], select, textarea {
+      font-family: 'Lora', serif;
+      font-size: 0.95rem;
+      color: var(--dark-brown);
+      background: var(--cream);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--rust);
+      box-shadow: 0 0 0 3px rgba(192,80,42,0.12);
+      background: #fff;
+    }
+    textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+
+    /* Ingredient & Step rows */
+    .dynamic-list { display: flex; flex-direction: column; gap: 10px; }
+    .list-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      animation: slideIn 0.2s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .list-row input, .list-row textarea {
+      flex: 1;
+      margin: 0;
+    }
+    .btn-remove {
+      background: none;
+      border: 1.5px solid #ddb89a;
+      color: var(--rust);
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .btn-remove:hover { background: var(--rust); color: #fff; border-color: var(--rust); }
+
+    .btn-add {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Lora', serif;
+      font-size: 0.9rem;
+      color: var(--sage);
+      background: none;
+      border: 1.5px dashed var(--sage);
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all 0.2s;
+    }
+    .btn-add:hover { background: var(--sage); color: #fff; }
+
+    /* Buttons */
+    .btn-primary {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--rust), #a03d1e);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 36px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 16px rgba(192,80,42,0.3);
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(192,80,42,0.4); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      font-family: 'Lora', serif;
+      font-size: 0.9rem;
+      background: none;
+      color: var(--warm-brown);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: var(--parchment); border-color: var(--warm-brown); }
+
+    .form-actions {
+      display: flex; gap: 14px; align-items: center;
+      margin-top: 30px; padding-top: 24px;
+      border-top: 1px dashed var(--border);
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 30px; right: 30px;
+      background: var(--dark-brown);
+      color: var(--cream);
+      font-family: 'Lora', serif;
+      font-style: italic;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+      z-index: 9999;
+      display: flex; align-items: center; gap: 10px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── RECIPE CARDS GRID ── */
+    .filters {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 28px; align-items: center;
+    }
+    .filters input[type="text"] {
+      flex: 1; min-width: 200px;
+      background: #fff;
+    }
+    .filters select { min-width: 160px; background: #fff; }
+
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .recipe-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 18px var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+    }
+    .recipe-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(62,32,16,0.16);
+    }
+    .recipe-card-top {
+      background: linear-gradient(135deg, var(--parchment), #ffe4c4);
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .recipe-emoji {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .recipe-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--dark-brown);
+      line-height: 1.3;
+    }
+    .recipe-card-author {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1rem;
+      color: var(--warm-brown);
+      margin-top: 4px;
+    }
+    .recipe-category-badge {
+      position: absolute; top: 14px; right: 14px;
+      background: var(--rust);
+      color: #fff;
+      font-family: 'Lora', serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .recipe-card-body { padding: 16px 22px 20px; flex: 1; }
+    .recipe-meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: #7a6048;
+      margin-bottom: 10px;
+    }
+    .recipe-meta span { display: flex; align-items: center; gap: 4px; }
+    .recipe-desc {
+      font-style: italic;
+      font-size: 0.88rem;
+      color: #6a5040;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #a08060;
+    }
+    .empty-state .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--warm-brown);
+      margin-bottom: 8px;
+    }
+    .empty-state p { font-style: italic; }
+
+    /* ── MODAL (Recipe Detail) ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(30, 14, 4, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--cream);
+      border-radius: 16px;
+      max-width: 700px; width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--warm-brown), #5c3318);
+      padding: 28px 32px 22px;
+      border-radius: 16px 16px 0 0;
+      position: relative;
+    }
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--cream);
+      line-height: 1.2;
+    }
+    .modal-header .modal-author {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1rem;
+      color: var(--honey);
+      margin-top: 6px;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 18px;
+      background: rgba(255,255,255,0.15);
+      border: none; color: #fff;
+      border-radius: 50%; width: 36px; height: 36px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.3); }
+
+    .modal-body { padding: 28px 32px 32px; }
+    .modal-meta {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      padding: 16px;
+      background: var(--parchment);
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+    .modal-meta span { display: flex; align-items: center; gap: 6px; color: var(--warm-brown); }
+
+    .modal-section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--rust);
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+    .ingredients-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .ingredients-list li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .ingredients-list li::before {
+      content: '✦';
+      color: var(--honey);
+      font-size: 0.65rem;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .steps-list {
+      display: flex; flex-direction: column; gap: 16px;
+      margin-bottom: 24px;
+    }
+    .step-item {
+      display: flex; gap: 14px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 30px; height: 30px;
+      background: var(--rust);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-text { font-size: 0.93rem; line-height: 1.7; padding-top: 4px; }
+
+    .modal-notes {
+      background: #fffbf0;
+      border-left: 4px solid var(--honey);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #6a5040;
+      margin-top: 8px;
+    }
+
+    .modal-actions {
+      display: flex; gap: 12px; margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--border);
+    }
+    .btn-danger {
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      background: none;
+      color: #c0392b;
+      border: 1.5px solid #e5a99e;
+      border-radius: 8px;
+      padding: 9px 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-danger:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .about-box {
+      background: var(--parchment);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .about-box h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--warm-brown);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .about-box p { font-size: 0.92rem; line-height: 1.7; color: #5a4030; }
+    .about-quote {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.6rem;
+      color: var(--rust);
+      padding: 10px 0;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 650px) {
+      .card { padding: 22px 18px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; }
+      .ingredients-list { grid-template-columns: 1fr; }
+      .modal-body { padding: 20px 18px 24px; }
+      .modal-header { padding: 22px 20px 18px; }
+      .modal-header h2 { font-size: 1.4rem; }
+      .tab-btn { padding: 12px 16px; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <p class="header-decor">🌿 est. with love 🌿</p>
+  <h1>Noni's <span>Recipe Box</span></h1>
+  <p class="header-sub">A collection of treasured family recipes, made to share</p>
+  <div class="header-line">
+    <span></span><i>❧</i><span></span>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab-btn active" onclick="showTab('browse')">📖 Browse Recipes</button>
+  <button class="tab-btn" onclick="showTab('add')">✏️ Add a Recipe</button>
+  <button class="tab-btn" onclick="showTab('about')">🏡 About</button>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── BROWSE TAB ── -->
+  <section id="tab-browse" class="section active">
+    <div class="filters">
+      <input type="text" id="search-input" placeholder="🔍  Search recipes…" oninput="renderRecipes()">
+      <select id="filter-category" onchange="renderRecipes()">
+        <option value="">All Categories</option>
+        <option>Breakfast</option>
+        <option>Soups & Stews</option>
+        <option>Main Dishes</option>
+        <option>Side Dishes</option>
+        <option>Salads</option>
+        <option>Breads & Biscuits</option>
+        <option>Desserts</option>
+        <option>Canning & Preserves</option>
+        <option>Drinks</option>
+        <option>Other</option>
+      </select>
+      <select id="filter-sort" onchange="renderRecipes()">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="alpha">A → Z</option>
+      </select>
+    </div>
+    <div class="recipes-grid" id="recipes-grid"></div>
+  </section>
+
+  <!-- ── ADD TAB ── -->
+  <section id="tab-add" class="section">
+    <div class="card">
+      <h2 class="section-title">Share a <span>New Recipe</span></h2>
+      <p class="section-desc">Fill in the details below — the more you share, the more others will love it!</p>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Recipe Name <span class="required">*</span></label>
+          <input type="text" id="r-name" placeholder="e.g. Sunday Pot Roast">
+        </div>
+
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="r-author" placeholder="e.g. Grandma Rose">
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+          <select id="r-category">
+            <option>Breakfast</option>
+            <option>Soups & Stews</option>
+            <option selected>Main Dishes</option>
+            <option>Side Dishes</option>
+            <option>Salads</option>
+            <option>Breads & Biscuits</option>
+            <option>Desserts</option>
+            <option>Canning & Preserves</option>
+            <option>Drinks</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Servings</label>
+          <input type="number" id="r-servings" placeholder="e.g. 6" min="1">
+        </div>
+
+        <div class="form-group">
+          <label>Prep Time</label>
+          <input type="text" id="r-prep" placeholder="e.g. 20 minutes">
+        </div>
+
+        <div class="form-group">
+          <label>Cook Time</label>
+          <input type="text" id="r-cook" placeholder="e.g. 1 hour 30 minutes">
+        </div>
+
+        <div class="form-group full">
+          <label>Short Description</label>
+          <textarea id="r-desc" rows="2" placeholder="A comforting dish that's been in our family for generations…"></textarea>
+        </div>
+
+        <!-- Ingredients -->
+        <div class="form-group full">
+          <label>Ingredients <span class="required">*</span></label>
+          <div class="dynamic-list" id="ingredients-list"></div>
+          <button class="btn-add" onclick="addIngredient()">＋ Add Ingredient</button>
+        </div>
+
+        <!-- Steps -->
+        <div class="form-group full">
+          <label>Instructions <span class="required">*</span></label>
+          <div class="dynamic-list" id="steps-list"></div>
+          <button class="btn-add" onclick="addStep()">＋ Add Step</button>
+        </div>
+
+        <div class="form-group full">
+          <label>Notes & Tips</label>
+          <textarea id="r-notes" rows="3" placeholder="Any substitutions, storage tips, or family secrets…"></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveRecipe()">Save Recipe 🍴</button>
+        <button class="btn-secondary" onclick="clearForm()">Clear Form</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT TAB ── -->
+  <section id="tab-about" class="section">
+    <div class="card">
+      <h2 class="section-title">About This <span>Recipe Box</span></h2>
+      <p class="section-desc">A little corner of the internet for family and friends to gather around good food.</p>
+
+      <p class="about-quote">"The secret ingredient is always love."</p>
+
+      <div class="about-grid" style="margin-top: 28px;">
+        <div class="about-box">
+          <h3>📖 How to Browse</h3>
+          <p>Head over to the <strong>Browse Recipes</strong> tab to explore all saved recipes. You can search by name or filter by category to find exactly what you're looking for.</p>
+        </div>
+        <div class="about-box">
+          <h3>✏️ How to Add a Recipe</h3>
+          <p>Click <strong>Add a Recipe</strong>, fill in the details — name, ingredients, and steps — and press Save. Your recipe will appear in the collection right away!</p>
+        </div>
+        <div class="about-box">
+          <h3>💾 Saving Your Recipes</h3>
+          <p>All recipes are saved right in your browser using <strong>local storage</strong>. They'll be here every time you visit on this device. No sign-in needed!</p>
+        </div>
+        <div class="about-box">
+          <h3>🗑️ Deleting a Recipe</h3>
+          <p>Open any recipe card and scroll to the bottom — you'll find a <strong>Delete</strong> button if you ever need to remove a recipe from the collection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- RECIPE DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      <h2 id="modal-title">—</h2>
+      <p class="modal-author" id="modal-author"></p>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">✓ <span id="toast-msg"></span></div>
+
+<script>
+  /* ══════════════════════════════════════════
+     DATA LAYER  (localStorage)
+  ══════════════════════════════════════════ */
+  const STORAGE_KEY = 'grandma_recipe_box_v1';
+
+  function loadRecipes() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveRecipes(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  /* ══════════════════════════════════════════
+     TABS
+  ══════════════════════════════════════════ */
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if (id === 'browse') renderRecipes();
+  }
+
+  /* ══════════════════════════════════════════
+     DYNAMIC FORM ROWS
+  ══════════════════════════════════════════ */
+  function addIngredient(value = '') {
+    const list = document.getElementById('ingredients-list');
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `
+      <input type="text" placeholder="e.g. 2 cups all-purpose flour" value="${escHtml(value)}">
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+    list.appendChild(row);
+  }
+
+  function addStep(value = '') {
+    const list = document.getElementById('steps-list');
+    const idx = list.children.length + 1;
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `
+      <textarea placeholder="Step ${idx}: describe what to do…" rows="3">${escHtml(value)}</textarea>
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+    list.appendChild(row);
+  }
+
+  function initFormRows() {
+    const iList = document.getElementById('ingredients-list');
+    const sList = document.getElementById('steps-list');
+    if (!iList.children.length) addIngredient();
+    if (!sList.children.length) addStep();
+  }
+  initFormRows();
+
+  /* ══════════════════════════════════════════
+     SAVE RECIPE
+  ══════════════════════════════════════════ */
+  function saveRecipe() {
+    const name = document.getElementById('r-name').value.trim();
+    if (!name) { showToast('Please enter a recipe name!'); return; }
+
+    const ingredients = [...document.querySelectorAll('#ingredients-list .list-row input')]
+      .map(i => i.value.trim()).filter(Boolean);
+    const steps = [...document.querySelectorAll('#steps-list .list-row textarea')]
+      .map(t => t.value.trim()).filter(Boolean);
+
+    if (!ingredients.length) { showToast('Add at least one ingredient!'); return; }
+    if (!steps.length) { showToast('Add at least one instruction step!'); return; }
+
+    const recipe = {
+      id: Date.now(),
+      name,
+      author:      document.getElementById('r-author').value.trim() || 'Anonymous',
+      category:    document.getElementById('r-category').value,
+      servings:    document.getElementById('r-servings').value.trim(),
+      prep:        document.getElementById('r-prep').value.trim(),
+      cook:        document.getElementById('r-cook').value.trim(),
+      description: document.getElementById('r-desc').value.trim(),
+      notes:       document.getElementById('r-notes').value.trim(),
+      ingredients,
+      steps,
+      createdAt:   Date.now(),
+    };
+
+    const recipes = loadRecipes();
+    recipes.push(recipe);
+    saveRecipes(recipes);
+
+    showToast('Recipe saved! 🎉');
+    clearForm();
+
+    // Switch to browse after a moment
+    setTimeout(() => {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-browse').classList.add('active');
+      document.querySelector('.tab-btn').classList.add('active');
+      renderRecipes();
+    }, 900);
+  }
+
+  function clearForm() {
+    ['r-name','r-author','r-servings','r-prep','r-cook','r-desc','r-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('ingredients-list').innerHTML = '';
+    document.getElementById('steps-list').innerHTML = '';
+    initFormRows();
+  }
+
+  /* ══════════════════════════════════════════
+     RENDER BROWSE GRID
+  ══════════════════════════════════════════ */
+  const CATEGORY_EMOJIS = {
+    'Breakfast': '🍳', 'Soups & Stews': '🍲', 'Main Dishes': '🍽️',
+    'Side Dishes': '🥗', 'Salads': '🥙', 'Breads & Biscuits': '🍞',
+    'Desserts': '🍰', 'Canning & Preserves': '🫙', 'Drinks': '🥛', 'Other': '📌'
+  };
+
+  function renderRecipes() {
+    const grid = document.getElementById('recipes-grid');
+    let recipes = loadRecipes();
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const cat = document.getElementById('filter-category').value;
+    const sort = document.getElementById('filter-sort').value;
+
+    if (q) recipes = recipes.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      (r.description || '').toLowerCase().includes(q) ||
+      (r.author || '').toLowerCase().includes(q));
+    if (cat) recipes = recipes.filter(r => r.category === cat);
+
+    if (sort === 'newest') recipes.sort((a,b) => b.createdAt - a.createdAt);
+    else if (sort === 'oldest') recipes.sort((a,b) => a.createdAt - b.createdAt);
+    else recipes.sort((a,b) => a.name.localeCompare(b.name));
+
+    if (!recipes.length) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">🥧</div>
+          <h3>No recipes here yet!</h3>
+          <p>Be the first to add a cherished family recipe.</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = recipes.map(r => `
+      <div class="recipe-card" onclick="openModal(${r.id})">
+        <div class="recipe-card-top">
+          <span class="recipe-emoji">${CATEGORY_EMOJIS[r.category] || '🍴'}</span>
+          <div class="recipe-category-badge">${escHtml(r.category)}</div>
+          <div class="recipe-card-title">${escHtml(r.name)}</div>
+          <div class="recipe-card-author">by ${escHtml(r.author)}</div>
+        </div>
+        <div class="recipe-card-body">
+          <div class="recipe-meta">
+            ${r.prep ? `<span>⏱ ${escHtml(r.prep)} prep</span>` : ''}
+            ${r.cook ? `<span>🔥 ${escHtml(r.cook)} cook</span>` : ''}
+            ${r.servings ? `<span>🍴 Serves ${escHtml(r.servings)}</span>` : ''}
+          </div>
+          ${r.description ? `<p class="recipe-desc">${escHtml(r.description)}</p>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  renderRecipes();
+
+  /* ══════════════════════════════════════════
+     MODAL
+  ══════════════════════════════════════════ */
+  function openModal(id) {
+    const recipes = loadRecipes();
+    const r = recipes.find(x => x.id === id);
+    if (!r) return;
+
+    document.getElementById('modal-title').textContent = r.name;
+    document.getElementById('modal-author').textContent =
+      `by ${r.author}  ·  ${r.category}`;
+
+    const metaBits = [
+      r.prep     ? `<span>⏱ <strong>Prep:</strong> ${escHtml(r.prep)}</span>` : '',
+      r.cook     ? `<span>🔥 <strong>Cook:</strong> ${escHtml(r.cook)}</span>` : '',
+      r.servings ? `<span>🍴 <strong>Serves:</strong> ${escHtml(r.servings)}</span>` : '',
+    ].filter(Boolean).join('');
+
+    const ingredientsHtml = r.ingredients.map(i =>
+      `<li>${escHtml(i)}</li>`).join('');
+    const stepsHtml = r.steps.map((s, idx) =>
+      `<div class="step-item">
+        <div class="step-num">${idx + 1}</div>
+        <div class="step-text" style="white-space:pre-wrap;">${escHtml(s)}</div>
+      </div>`).join('');
+
+    document.getElementById('modal-body').innerHTML = `
+      ${metaBits ? `<div class="modal-meta">${metaBits}</div>` : ''}
+      ${r.description ? `<p style="font-style:italic;margin-bottom:20px;color:#6a5040;">${escHtml(r.description)}</p>` : ''}
+
+      <h3 class="modal-section-title">Ingredients</h3>
+      <ul class="ingredients-list">${ingredientsHtml}</ul>
+
+      <h3 class="modal-section-title">Instructions</h3>
+      <div class="steps-list">${stepsHtml}</div>
+
+      ${r.notes ? `
+        <h3 class="modal-section-title">Notes & Tips</h3>
+        <div class="modal-notes">${escHtml(r.notes)}</div>` : ''}
+
+      <div class="modal-actions">
+        <button class="btn-danger" onclick="deleteRecipe(${r.id})">🗑 Delete Recipe</button>
+      </div>`;
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+  }
+  function closeModalDirect() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function deleteRecipe(id) {
+    if (!confirm('Remove this recipe from the box?')) return;
+    const recipes = loadRecipes().filter(r => r.id !== id);
+    saveRecipes(recipes);
+    closeModalDirect();
+    renderRecipes();
+    showToast('Recipe removed.');
+  }
+
+  /* ══════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════ */
+  let toastTimer;
+  function showToast(msg) {
+    clearTimeout(toastTimer);
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast').classList.add('show');
+    toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
+  }
+
+  /* ══════════════════════════════════════════
+     UTILS
+  ══════════════════════════════════════════ */
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
