@@ -606,6 +606,9 @@
         <option>Drinks</option>
         <option>Other</option>
       </select>
+      <select id="filter-author" onchange="renderRecipes()">
+        <option value="">All Cooks</option>
+      </select>
       <select id="filter-sort" onchange="renderRecipes()">
         <option value="newest">Newest First</option>
         <option value="oldest">Oldest First</option>
@@ -708,19 +711,19 @@
       <div class="about-grid" style="margin-top: 28px;">
         <div class="about-box">
           <h3>📖 How to Browse</h3>
-          <p>Head over to the <strong>Browse Recipes</strong> tab to explore all saved recipes. You can search by name or filter by category to find exactly what you're looking for.</p>
+          <p>Head over to the <strong>Browse Recipes</strong> tab to explore all saved recipes. Search by name, filter by category, or filter by who made it to find exactly what you're looking for.</p>
         </div>
         <div class="about-box">
           <h3>✏️ How to Add a Recipe</h3>
-          <p>Click <strong>Add a Recipe</strong>, fill in the details — name, ingredients, and steps — and press Save. Your recipe will appear in the collection right away!</p>
+          <p>Click <strong>Add a Recipe</strong>, fill in the details — name, ingredients, and steps — and press Save. Your recipe will appear in the shared collection right away!</p>
         </div>
         <div class="about-box">
-          <h3>💾 Saving Your Recipes</h3>
-          <p>All recipes are saved right in your browser using <strong>local storage</strong>. They'll be here every time you visit on this device. No sign-in needed!</p>
+          <h3>☁️ Shared in the Cloud</h3>
+          <p>All recipes are stored in a <strong>shared online database</strong>, so everyone sees the same collection no matter what device or browser they use. No sign-in needed!</p>
         </div>
         <div class="about-box">
-          <h3>🗑️ Deleting a Recipe</h3>
-          <p>Open any recipe card and scroll to the bottom — you'll find a <strong>Delete</strong> button if you ever need to remove a recipe from the collection.</p>
+          <h3>✏️ Editing & Deleting</h3>
+          <p>Open any recipe card to view it in full. From there you can <strong>edit</strong> any details, <strong>share</strong> a direct link with a friend, <strong>save it as a PDF</strong>, or <strong>delete</strong> it from the collection.</p>
         </div>
       </div>
     </div>
@@ -939,6 +942,7 @@
 
     const q = document.getElementById('search-input').value.toLowerCase();
     const cat = document.getElementById('filter-category').value;
+    const author = document.getElementById('filter-author').value;
     const sort = document.getElementById('filter-sort').value;
 
     let query = db.from('recipes').select('*');
@@ -952,12 +956,20 @@
       return;
     }
 
+    // ── populate author dropdown from real data
+    const authorSelect = document.getElementById('filter-author');
+    const currentAuthor = authorSelect.value;
+    const uniqueAuthors = [...new Set((recipes || []).map(r => r.author).filter(Boolean))].sort();
+    authorSelect.innerHTML = '<option value="">All Cooks</option>' +
+      uniqueAuthors.map(a => `<option value="${escHtml(a)}" ${a === currentAuthor ? 'selected' : ''}>${escHtml(a)}</option>`).join('');
+
     let filtered = recipes || [];
     if (q) filtered = filtered.filter(r =>
       r.name.toLowerCase().includes(q) ||
       (r.description || '').toLowerCase().includes(q) ||
       (r.author || '').toLowerCase().includes(q));
     if (cat) filtered = filtered.filter(r => r.category === cat);
+    if (author) filtered = filtered.filter(r => r.author === author);
 
     if (!filtered.length) {
       grid.innerHTML = `
