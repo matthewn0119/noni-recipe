@@ -1056,9 +1056,9 @@
 
     // ── meta row (prep / cook / serves)
     const metaItems = [
-      r.prep     ? `⏱  Prep: ${r.prep}`    : null,
-      r.cook     ? `🔥  Cook: ${r.cook}`    : null,
-      r.servings ? `🍴  Serves: ${r.servings}` : null,
+      r.prep     ? `Prep: ${r.prep}`    : null,
+      r.cook     ? `Cook: ${r.cook}`    : null,
+      r.servings ? `Serves: ${r.servings}` : null,
     ].filter(Boolean);
 
     if (metaItems.length) {
