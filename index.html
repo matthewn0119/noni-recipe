@@ -630,7 +630,7 @@
 
         <div class="form-group">
           <label>Your Name</label>
-          <input type="text" id="r-author" placeholder="e.g. Noni">
+          <input type="text" id="r-author" placeholder="e.g. Grandma Rose">
         </div>
 
         <div class="form-group">
@@ -743,20 +743,16 @@
 <!-- TOAST -->
 <div id="toast">✓ <span id="toast-msg"></span></div>
 
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
   /* ══════════════════════════════════════════
-     DATA LAYER  (localStorage)
+     SUPABASE SETUP
   ══════════════════════════════════════════ */
-  const STORAGE_KEY = 'noni_recipe_box_v1';
-
-  function loadRecipes() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch { return []; }
-  }
-
-  function saveRecipes(arr) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  }
+  const SUPABASE_URL = 'https://rjzqnafzbolivnuksaur.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqenFuYWZ6Ym9saXZudWtzYXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NDY5MTgsImV4cCI6MjA5MTUyMjkxOH0.Qz2gv6IpUC9HW6kAHolyA-3At2WDKNPZFmoIs80vuc0';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   /* ══════════════════════════════════════════
      TABS
@@ -804,7 +800,7 @@
   /* ══════════════════════════════════════════
      SAVE RECIPE
   ══════════════════════════════════════════ */
-  function saveRecipe() {
+  async function saveRecipe() {
     const name = document.getElementById('r-name').value.trim();
     if (!name) { showToast('Please enter a recipe name!'); return; }
 
@@ -817,7 +813,6 @@
     if (!steps.length) { showToast('Add at least one instruction step!'); return; }
 
     const recipe = {
-      id: Date.now(),
       name,
       author:      document.getElementById('r-author').value.trim() || 'Anonymous',
       category:    document.getElementById('r-category').value,
@@ -828,12 +823,10 @@
       notes:       document.getElementById('r-notes').value.trim(),
       ingredients,
       steps,
-      createdAt:   Date.now(),
     };
 
-    const recipes = loadRecipes();
-    recipes.push(recipe);
-    saveRecipes(recipes);
+    const { error } = await db.from('recipes').insert([recipe]);
+    if (error) { console.error(error); showToast('Oops! Could not save. Please try again.'); return; }
 
     showToast('Recipe saved! 🎉');
     clearForm();
@@ -866,24 +859,33 @@
     'Desserts': '🍰', 'Canning & Preserves': '🫙', 'Drinks': '🥛', 'Other': '📌'
   };
 
-  function renderRecipes() {
+  async function renderRecipes() {
     const grid = document.getElementById('recipes-grid');
-    let recipes = loadRecipes();
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#a08060;font-style:italic;">Loading recipes…</div>`;
+
     const q = document.getElementById('search-input').value.toLowerCase();
     const cat = document.getElementById('filter-category').value;
     const sort = document.getElementById('filter-sort').value;
 
-    if (q) recipes = recipes.filter(r =>
+    let query = db.from('recipes').select('*');
+    if (sort === 'newest') query = query.order('created_at', { ascending: false });
+    else if (sort === 'oldest') query = query.order('created_at', { ascending: true });
+    else query = query.order('name', { ascending: true });
+
+    const { data: recipes, error } = await query;
+    if (error) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--rust);">Could not load recipes. Please refresh.</div>`;
+      return;
+    }
+
+    let filtered = recipes || [];
+    if (q) filtered = filtered.filter(r =>
       r.name.toLowerCase().includes(q) ||
       (r.description || '').toLowerCase().includes(q) ||
       (r.author || '').toLowerCase().includes(q));
-    if (cat) recipes = recipes.filter(r => r.category === cat);
+    if (cat) filtered = filtered.filter(r => r.category === cat);
 
-    if (sort === 'newest') recipes.sort((a,b) => b.createdAt - a.createdAt);
-    else if (sort === 'oldest') recipes.sort((a,b) => a.createdAt - b.createdAt);
-    else recipes.sort((a,b) => a.name.localeCompare(b.name));
-
-    if (!recipes.length) {
+    if (!filtered.length) {
       grid.innerHTML = `
         <div class="empty-state" style="grid-column:1/-1">
           <div class="empty-icon">🥧</div>
@@ -893,8 +895,8 @@
       return;
     }
 
-    grid.innerHTML = recipes.map(r => `
-      <div class="recipe-card" onclick="openModal(${r.id})">
+    grid.innerHTML = filtered.map(r => `
+      <div class="recipe-card" onclick="openModal('${r.id}')">
         <div class="recipe-card-top">
           <span class="recipe-emoji">${CATEGORY_EMOJIS[r.category] || '🍴'}</span>
           <div class="recipe-category-badge">${escHtml(r.category)}</div>
@@ -917,10 +919,9 @@
   /* ══════════════════════════════════════════
      MODAL
   ══════════════════════════════════════════ */
-  function openModal(id) {
-    const recipes = loadRecipes();
-    const r = recipes.find(x => x.id === id);
-    if (!r) return;
+  async function openModal(id) {
+    const { data: r, error } = await db.from('recipes').select('*').eq('id', id).single();
+    if (error || !r) return;
 
     document.getElementById('modal-title').textContent = r.name;
     document.getElementById('modal-author').textContent =
@@ -955,7 +956,8 @@
         <div class="modal-notes">${escHtml(r.notes)}</div>` : ''}
 
       <div class="modal-actions">
-        <button class="btn-danger" onclick="deleteRecipe(${r.id})">🗑 Delete Recipe</button>
+        <button class="btn-primary" onclick="shareRecipe('${r.id}', '${escHtml(r.name)}')">🔗 Copy Share Link</button>
+        <button class="btn-danger" onclick="deleteRecipe('${r.id}')">🗑 Delete Recipe</button>
       </div>`;
 
     document.getElementById('modal-overlay').classList.add('open');
@@ -968,16 +970,36 @@
   function closeModalDirect() {
     document.getElementById('modal-overlay').classList.remove('open');
     document.body.style.overflow = '';
+    history.replaceState(null, '', location.pathname);
   }
 
-  function deleteRecipe(id) {
+  async function deleteRecipe(id) {
     if (!confirm('Remove this recipe from the box?')) return;
-    const recipes = loadRecipes().filter(r => r.id !== id);
-    saveRecipes(recipes);
+    const { error } = await db.from('recipes').delete().eq('id', id);
+    if (error) { showToast('Could not delete. Please try again.'); return; }
     closeModalDirect();
     renderRecipes();
     showToast('Recipe removed.');
   }
+
+  /* ══════════════════════════════════════════
+     SHARE
+  ══════════════════════════════════════════ */
+  function shareRecipe(id, name) {
+    const url = `${location.origin}${location.pathname}?recipe=${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      showToast(`Link copied! Share it with friends 🔗`);
+    }).catch(() => {
+      prompt('Copy this link to share:', url);
+    });
+  }
+
+  // On page load, open recipe if ?recipe= param is present
+  window.addEventListener('load', async () => {
+    const params = new URLSearchParams(location.search);
+    const recipeId = params.get('recipe');
+    if (recipeId) openModal(recipeId);
+  });
 
   /* ══════════════════════════════════════════
      TOAST
