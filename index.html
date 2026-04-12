@@ -554,12 +554,56 @@
       padding: 10px 0;
     }
 
+    /* ── IDEA CARDS ── */
+    .idea-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: 0 4px 18px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .idea-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px var(--shadow); }
+    .idea-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark-brown);
+    }
+    .idea-card-url {
+      font-size: 0.82rem;
+      color: var(--sage);
+      word-break: break-all;
+      text-decoration: none;
+    }
+    .idea-card-url:hover { text-decoration: underline; }
+    .idea-card-notes {
+      font-size: 0.88rem;
+      font-style: italic;
+      color: #6a5040;
+      line-height: 1.6;
+    }
+    .idea-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .idea-date {
+      font-size: 0.75rem;
+      color: #b0906a;
+      margin-top: 2px;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 650px) {
       .card { padding: 22px 18px; }
       .form-grid { grid-template-columns: 1fr; }
       .about-grid { grid-template-columns: 1fr; }
-      .ingredients-list { grid-template-columns: 1fr; }
+      .ingredients-list { grid-column: 1fr; }
       .modal-body { padding: 20px 18px 24px; }
       .modal-header { padding: 22px 20px 18px; }
       .modal-header h2 { font-size: 1.4rem; }
@@ -583,6 +627,7 @@
 <nav class="tabs">
   <button class="tab-btn active" onclick="showTab('browse')">📖 Browse Recipes</button>
   <button class="tab-btn" onclick="showTab('add')">✏️ Add a Recipe</button>
+  <button class="tab-btn" onclick="showTab('ideas')">💡 My Ideas</button>
   <button class="tab-btn" onclick="showTab('about')">🏡 About</button>
 </nav>
 
@@ -722,11 +767,57 @@
           <p>All recipes are stored in a <strong>shared online database</strong>, so everyone sees the same collection no matter what device or browser they use. No sign-in needed!</p>
         </div>
         <div class="about-box">
+          <h3>💡 My Ideas</h3>
+          <p>A personal scratchpad saved only on <strong>your device</strong>. Paste links, jot down dishes you want to try, and add notes — nobody else can see these. Capped at 50 ideas to keep your storage light.</p>
+        </div>
+        <div class="about-box" style="grid-column: 1 / -1;">
           <h3>✏️ Editing & Deleting</h3>
           <p>Open any recipe card to view it in full. From there you can <strong>edit</strong> any details, <strong>share</strong> a direct link with a friend, <strong>save it as a PDF</strong>, or <strong>delete</strong> it from the collection.</p>
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- ── IDEAS TAB ── -->
+  <section id="tab-ideas" class="section">
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 class="section-title">My <span>Ideas</span></h2>
+      <p class="section-desc">A personal scratchpad — just for you, saved on this device. Jot down dishes you want to try, paste links, add notes.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Dish Name <span class="required">*</span></label>
+          <input type="text" id="idea-name" placeholder="e.g. Lemon Ricotta Pancakes">
+        </div>
+        <div class="form-group">
+          <label>Link / URL</label>
+          <input type="text" id="idea-url" placeholder="e.g. https://...">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="idea-notes" rows="3" placeholder="Why you want to try it, where you saw it, any tweaks you'd make…"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveIdea()">Save Idea 💡</button>
+        <button class="btn-secondary" onclick="clearIdeaForm()">Clear</button>
+      </div>
+
+      <!-- storage meter -->
+      <div style="margin-top: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-family:'Playfair Display',serif; font-size:0.82rem; color:var(--warm-brown);">Local storage used</span>
+          <span id="ideas-storage-label" style="font-size:0.82rem; color:var(--warm-brown);"></span>
+        </div>
+        <div style="background:#e8ddd0; border-radius:20px; height:8px; overflow:hidden;">
+          <div id="ideas-storage-bar" style="height:100%; border-radius:20px; background: linear-gradient(90deg, var(--sage), var(--honey)); transition: width 0.4s;"></div>
+        </div>
+        <p style="font-size:0.78rem; font-style:italic; color:#a08060; margin-top:6px;">Capped at 50 ideas to keep storage light.</p>
+      </div>
+    </div>
+
+    <div id="ideas-grid" class="recipes-grid"></div>
   </section>
 
 </main>
@@ -834,13 +925,6 @@
   /* ══════════════════════════════════════════
      TABS
   ══════════════════════════════════════════ */
-  function showTab(id) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    event.currentTarget.classList.add('active');
-    if (id === 'browse') renderRecipes();
-  }
 
   /* ══════════════════════════════════════════
      DYNAMIC FORM ROWS
@@ -1395,8 +1479,126 @@
   });
 
   /* ══════════════════════════════════════════
-     TOAST
+     IDEAS  (localStorage, capped at 50)
   ══════════════════════════════════════════ */
+  const IDEAS_KEY   = 'noni_ideas_v1';
+  const IDEAS_LIMIT = 50;
+
+  function loadIdeas() {
+    try { return JSON.parse(localStorage.getItem(IDEAS_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function persistIdeas(arr) {
+    // hard cap — keep newest 50
+    const capped = arr.slice(-IDEAS_LIMIT);
+    localStorage.setItem(IDEAS_KEY, JSON.stringify(capped));
+  }
+
+  function ideasStorageBytes() {
+    const raw = localStorage.getItem(IDEAS_KEY) || '';
+    return new Blob([raw]).size;
+  }
+
+  function updateStorageMeter() {
+    const ideas = loadIdeas();
+    const count = ideas.length;
+    const pct = Math.min((count / IDEAS_LIMIT) * 100, 100);
+    const bar = document.getElementById('ideas-storage-bar');
+    const label = document.getElementById('ideas-storage-label');
+    if (!bar || !label) return;
+    bar.style.width = pct + '%';
+    bar.style.background = pct > 80
+      ? 'linear-gradient(90deg, #c0392b, #e74c3c)'
+      : 'linear-gradient(90deg, var(--sage), var(--honey))';
+    const kb = (ideasStorageBytes() / 1024).toFixed(1);
+    label.textContent = `${count} / ${IDEAS_LIMIT} ideas  ·  ~${kb} KB`;
+  }
+
+  function saveIdea() {
+    const name = document.getElementById('idea-name').value.trim();
+    if (!name) { showToast('Please enter a dish name!'); return; }
+
+    const ideas = loadIdeas();
+    if (ideas.length >= IDEAS_LIMIT) {
+      showToast(`Limit of ${IDEAS_LIMIT} ideas reached — delete one first!`);
+      return;
+    }
+
+    const idea = {
+      id:    Date.now(),
+      name,
+      url:   document.getElementById('idea-url').value.trim(),
+      notes: document.getElementById('idea-notes').value.trim(),
+      savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    };
+
+    ideas.push(idea);
+    persistIdeas(ideas);
+    clearIdeaForm();
+    renderIdeas();
+    showToast('Idea saved! 💡');
+  }
+
+  function deleteIdea(id) {
+    const ideas = loadIdeas().filter(i => i.id !== id);
+    persistIdeas(ideas);
+    renderIdeas();
+    showToast('Idea removed.');
+  }
+
+  function copyIdeaLink(url) {
+    if (!url) { showToast('No link saved for this idea.'); return; }
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('Link copied! 🔗');
+    }).catch(() => {
+      prompt('Copy this link:', url);
+    });
+  }
+
+  function clearIdeaForm() {
+    ['idea-name', 'idea-url', 'idea-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+
+  function renderIdeas() {
+    const grid = document.getElementById('ideas-grid');
+    const ideas = loadIdeas().slice().reverse(); // newest first
+    updateStorageMeter();
+
+    if (!ideas.length) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">💡</div>
+          <h3>No ideas saved yet!</h3>
+          <p>Add a dish you'd love to try someday.</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = ideas.map(i => `
+      <div class="idea-card">
+        <div class="idea-card-title">${escHtml(i.name)}</div>
+        ${i.url ? `<a class="idea-card-url" href="${escHtml(i.url)}" target="_blank" rel="noopener">🔗 ${escHtml(i.url)}</a>` : ''}
+        ${i.notes ? `<div class="idea-card-notes">${escHtml(i.notes)}</div>` : ''}
+        <div class="idea-date">Saved ${escHtml(i.savedAt)}</div>
+        <div class="idea-card-actions">
+          ${i.url ? `<button class="btn-secondary" style="font-size:0.82rem;padding:7px 14px;" onclick="copyIdeaLink('${escHtml(i.url)}')">🔗 Copy Link</button>` : ''}
+          <button class="btn-danger" style="font-size:0.82rem;padding:7px 14px;" onclick="deleteIdea(${i.id})">🗑 Delete</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // render ideas when tab is opened
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if (id === 'browse') renderRecipes();
+    if (id === 'ideas') renderIdeas();
+  }
   let toastTimer;
   function showToast(msg) {
     clearTimeout(toastTimer);
