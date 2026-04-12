@@ -740,6 +740,78 @@
   </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal-overlay" onclick="closeEditModal(event)">
+  <div class="modal" id="edit-modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeEditModalDirect()">✕</button>
+      <h2>Edit Recipe</h2>
+      <p class="modal-author">Make your changes below and hit save</p>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Recipe Name <span class="required">*</span></label>
+          <input type="text" id="e-name" placeholder="e.g. Sunday Pot Roast">
+        </div>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="e-author" placeholder="e.g. Noni">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="e-category">
+            <option>Breakfast</option>
+            <option>Soups & Stews</option>
+            <option>Main Dishes</option>
+            <option>Side Dishes</option>
+            <option>Salads</option>
+            <option>Breads & Biscuits</option>
+            <option>Desserts</option>
+            <option>Canning & Preserves</option>
+            <option>Drinks</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Servings</label>
+          <input type="number" id="e-servings" placeholder="e.g. 6" min="1">
+        </div>
+        <div class="form-group">
+          <label>Prep Time</label>
+          <input type="text" id="e-prep" placeholder="e.g. 20 minutes">
+        </div>
+        <div class="form-group">
+          <label>Cook Time</label>
+          <input type="text" id="e-cook" placeholder="e.g. 1 hour 30 minutes">
+        </div>
+        <div class="form-group full">
+          <label>Short Description</label>
+          <textarea id="e-desc" rows="2" placeholder="A comforting dish…"></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Ingredients <span class="required">*</span></label>
+          <div class="dynamic-list" id="e-ingredients-list"></div>
+          <button class="btn-add" onclick="addEditIngredient()">＋ Add Ingredient</button>
+        </div>
+        <div class="form-group full">
+          <label>Instructions <span class="required">*</span></label>
+          <div class="dynamic-list" id="e-steps-list"></div>
+          <button class="btn-add" onclick="addEditStep()">＋ Add Step</button>
+        </div>
+        <div class="form-group full">
+          <label>Notes & Tips</label>
+          <textarea id="e-notes" rows="3" placeholder="Any substitutions, storage tips, or family secrets…"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveEdit()">Save Changes 🍴</button>
+        <button class="btn-secondary" onclick="closeEditModalDirect()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast">✓ <span id="toast-msg"></span></div>
 
@@ -959,6 +1031,7 @@
 
       <div class="modal-actions">
         <button class="btn-primary" onclick="shareRecipe('${r.id}', '${escHtml(r.name)}')">🔗 Copy Share Link</button>
+        <button class="btn-secondary" onclick="openEditModal('${r.id}')">✏️ Edit Recipe</button>
         <button class="btn-secondary" onclick="downloadPDF('${r.id}')">🖨️ Print / Save PDF</button>
         <button class="btn-danger" onclick="deleteRecipe('${r.id}')">🗑 Delete Recipe</button>
       </div>`;
@@ -983,6 +1056,110 @@
     closeModalDirect();
     renderRecipes();
     showToast('Recipe removed.');
+  }
+
+  /* ══════════════════════════════════════════
+     EDIT
+  ══════════════════════════════════════════ */
+  let currentEditId = null;
+
+  async function openEditModal(id) {
+    const { data: r, error } = await db.from('recipes').select('*').eq('id', id).single();
+    if (error || !r) { showToast('Could not load recipe.'); return; }
+    currentEditId = id;
+
+    // populate fields
+    document.getElementById('e-name').value     = r.name || '';
+    document.getElementById('e-author').value   = r.author || '';
+    document.getElementById('e-servings').value = r.servings || '';
+    document.getElementById('e-prep').value     = r.prep || '';
+    document.getElementById('e-cook').value     = r.cook || '';
+    document.getElementById('e-desc').value     = r.description || '';
+    document.getElementById('e-notes').value    = r.notes || '';
+
+    // set category
+    const catSelect = document.getElementById('e-category');
+    [...catSelect.options].forEach(o => o.selected = o.value === r.category);
+
+    // populate ingredients
+    const iList = document.getElementById('e-ingredients-list');
+    iList.innerHTML = '';
+    (r.ingredients || []).forEach(v => addEditIngredient(v));
+    if (!iList.children.length) addEditIngredient();
+
+    // populate steps
+    const sList = document.getElementById('e-steps-list');
+    sList.innerHTML = '';
+    (r.steps || []).forEach(v => addEditStep(v));
+    if (!sList.children.length) addEditStep();
+
+    // close view modal, open edit modal
+    closeModalDirect();
+    document.getElementById('edit-modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function addEditIngredient(value = '') {
+    const list = document.getElementById('e-ingredients-list');
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `
+      <input type="text" placeholder="e.g. 2 cups all-purpose flour" value="${escHtml(value)}">
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+    list.appendChild(row);
+  }
+
+  function addEditStep(value = '') {
+    const list = document.getElementById('e-steps-list');
+    const idx = list.children.length + 1;
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `
+      <textarea placeholder="Step ${idx}: describe what to do…" rows="3">${escHtml(value)}</textarea>
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+    list.appendChild(row);
+  }
+
+  async function saveEdit() {
+    const name = document.getElementById('e-name').value.trim();
+    if (!name) { showToast('Please enter a recipe name!'); return; }
+
+    const ingredients = [...document.querySelectorAll('#e-ingredients-list .list-row input')]
+      .map(i => i.value.trim()).filter(Boolean);
+    const steps = [...document.querySelectorAll('#e-steps-list .list-row textarea')]
+      .map(t => t.value.trim()).filter(Boolean);
+
+    if (!ingredients.length) { showToast('Add at least one ingredient!'); return; }
+    if (!steps.length) { showToast('Add at least one instruction step!'); return; }
+
+    const updates = {
+      name,
+      author:      document.getElementById('e-author').value.trim() || 'Anonymous',
+      category:    document.getElementById('e-category').value,
+      servings:    document.getElementById('e-servings').value.trim(),
+      prep:        document.getElementById('e-prep').value.trim(),
+      cook:        document.getElementById('e-cook').value.trim(),
+      description: document.getElementById('e-desc').value.trim(),
+      notes:       document.getElementById('e-notes').value.trim(),
+      ingredients,
+      steps,
+    };
+
+    const { error } = await db.from('recipes').update(updates).eq('id', currentEditId);
+    if (error) { console.error(error); showToast('Could not save changes. Please try again.'); return; }
+
+    closeEditModalDirect();
+    renderRecipes();
+    showToast('Recipe updated! ✅');
+  }
+
+  function closeEditModal(e) {
+    if (e.target === document.getElementById('edit-modal-overlay')) closeEditModalDirect();
+  }
+  function closeEditModalDirect() {
+    document.getElementById('edit-modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    currentEditId = null;
   }
 
   /* ══════════════════════════════════════════
