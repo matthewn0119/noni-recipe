@@ -28,7 +28,7 @@
       background-image:
         radial-gradient(ellipse at 20% 10%, #ffe8c840 0%, transparent 50%),
         radial-gradient(ellipse at 80% 90%, #d4933a18 0%, transparent 50%),
-        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a97a' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a97a' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       color: var(--dark-brown);
       min-height: 100vh;
     }
@@ -168,7 +168,7 @@
       font-family: 'Lora', serif;
       font-size: 0.95rem;
       color: var(--dark-brown);
-      background: var(--cream);
+      background: #ffffff;
       border: 1.5px solid var(--border);
       border-radius: 8px;
       padding: 10px 14px;
@@ -399,7 +399,7 @@
     }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
     .modal {
-      background: var(--cream);
+      background: #ffffff;
       border-radius: 16px;
       max-width: 700px; width: 100%;
       max-height: 90vh;
@@ -1011,9 +1011,9 @@
     const margin = 50;
     const contentW = W - margin * 2;
 
-    // ── background white (print friendly)
+    // ── background white (print friendly) — overpaint to avoid bleed
     doc.setFillColor(255, 255, 255);
-    doc.rect(0, 0, W, H, 'F');
+    doc.rect(-10, -10, W + 20, H + 20, 'F');
 
     // ── decorative header band (lighter for ink saving)
     doc.setFillColor(80, 50, 25);
@@ -1105,7 +1105,7 @@
       if (y + needed > H - 50) {
         doc.addPage();
         doc.setFillColor(255, 255, 255);
-        doc.rect(0, 0, W, H, 'F');
+        doc.rect(-10, -10, W + 20, H + 20, 'F');
         doc.setDrawColor(180, 150, 100);
         doc.setLineWidth(0.75);
         doc.rect(margin - 10, 30, contentW + 20, H - 60, 'S');
