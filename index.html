@@ -631,6 +631,11 @@
     }
     .planner-week-nav button:hover { background: var(--parchment); }
     .planner-week-nav button.current-week { background: var(--parchment); font-weight: 600; }
+    .planner-week-nav button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
 
     /* Two-panel layout */
     .planner-layout {
@@ -735,6 +740,76 @@
       font-style: italic;
       font-size: 0.8rem;
       color: #b0906a;
+    }
+
+    /* ── Bank card three-dot menu ── */
+    .bank-card {
+      position: relative;
+    }
+    .bank-card-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .bank-card-text { flex: 1; min-width: 0; }
+    .bank-card-menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--warm-brown);
+      font-size: 1rem;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      opacity: 0.55;
+      transition: opacity 0.15s, background 0.15s;
+      letter-spacing: 1px;
+    }
+    .bank-card:hover .bank-card-menu-btn { opacity: 1; }
+    .bank-card-menu-btn:hover { background: #e8d8c4; opacity: 1; }
+
+    .bank-card-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 4px);
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      box-shadow: 0 6px 22px rgba(62,32,16,0.18);
+      z-index: 200;
+      min-width: 140px;
+      padding: 5px 0;
+      font-family: 'Lora', serif;
+    }
+    .bank-card-dropdown.open { display: block; }
+    .bank-card-dropdown-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--warm-brown);
+      padding: 5px 12px 3px;
+      letter-spacing: 0.3px;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+    .bank-card-dropdown button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 7px 14px;
+      font-family: 'Lora', serif;
+      font-size: 0.82rem;
+      color: var(--dark-brown);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .bank-card-dropdown button:hover {
+      background: var(--parchment);
+      color: var(--rust);
     }
 
     /* ── Board (right panel) ── */
@@ -1085,7 +1160,7 @@
   <section id="tab-planner" class="section">
     <div class="card" style="margin-bottom: 0;">
       <h2 class="section-title">Weekly <span>Meal Planner</span></h2>
-      <p class="section-desc">Filter and drag recipes from the bank onto any day. Click a placed card to view its recipe.</p>
+      <p class="section-desc">Filter and drag recipes from the bank onto any day — or tap ⋯ on a card to add it to a specific day. Click a placed card to view its recipe.</p>
 
       <div class="planner-top-bar">
         <span class="planner-week-label" id="planner-week-label">Week of …</span>
@@ -1102,7 +1177,7 @@
         <div class="recipe-bank">
           <div class="recipe-bank-header">
             <h3>📚 Recipe Bank</h3>
-            <p>Drag a recipe onto a day</p>
+            <p>Drag onto a day, or tap ⋯ to add</p>
           </div>
           <div class="recipe-bank-filters">
             <input  type="text"   class="bank-filter" id="bank-search"   placeholder="🔍 Search…"       oninput="renderBank()">
@@ -1918,6 +1993,7 @@
   ══════════════════════════════════════════ */
   const PLANNER_KEY = 'noni_planner_v1';
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const PLANNER_WEEK_LIMIT = 5; // max weeks past or future
 
   let plannerWeekOffset = 0;
   let plannerRecipes    = [];   // all recipes from Supabase
@@ -1954,8 +2030,10 @@
     try {
       const all = JSON.parse(localStorage.getItem(PLANNER_KEY)) || {};
       all[weekKey] = plan;
+      // Keep only 11 weeks (current ± 5) — trim oldest beyond that
       const keys = Object.keys(all).sort();
-      if (keys.length > 8) keys.slice(0, keys.length - 8).forEach(k => delete all[k]);
+      const maxWeeks = PLANNER_WEEK_LIMIT * 2 + 1; // 11
+      if (keys.length > maxWeeks) keys.slice(0, keys.length - maxWeeks).forEach(k => delete all[k]);
       localStorage.setItem(PLANNER_KEY, JSON.stringify(all));
     } catch(e) { console.error(e); }
   }
@@ -1968,6 +2046,24 @@
   }
 
   // ── Recipe Bank ───────────────────────────────────────────────────
+  function closeAllBankDropdowns() {
+    document.querySelectorAll('.bank-card-dropdown.open').forEach(d => d.classList.remove('open'));
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.bank-card')) closeAllBankDropdowns();
+  });
+
+  function addRecipeToDay(recipeId, dayIndex) {
+    const zone = document.querySelector(`.planner-drop-zone[data-col="day${dayIndex}"]`);
+    if (!zone) { showToast('Please open the Meal Planner first.'); return; }
+    const recipe = plannerRecipes.find(r => String(r.id) === String(recipeId));
+    if (!recipe) return;
+    const newCard = makeMealCard(recipe);
+    zone.appendChild(newCard);
+    updateEmptyStates();
+    showToast(`Added to ${DAYS[dayIndex]}! 📅`);
+  }
+
   function renderBank() {
     const list     = document.getElementById('recipe-bank-list');
     const search   = (document.getElementById('bank-search')?.value   || '').trim().toLowerCase();
@@ -1992,13 +2088,37 @@
       card.className = 'bank-card';
       card.draggable = true;
       card.dataset.recipeId = recipe.id;
+
+      // Build day options for dropdown
+      const dayButtons = DAYS.map((day, di) =>
+        `<button onclick="addRecipeToDay('${recipe.id}', ${di}); closeAllBankDropdowns();">${day}</button>`
+      ).join('');
+
       card.innerHTML = `
-        <div class="bank-card-name">${CATEGORY_EMOJIS[recipe.category] || '🍴'} ${escHtml(recipe.name)}</div>
-        <div class="bank-card-cat">${escHtml(recipe.category || '')}</div>`;
+        <div class="bank-card-inner">
+          <div class="bank-card-text">
+            <div class="bank-card-name">${CATEGORY_EMOJIS[recipe.category] || '🍴'} ${escHtml(recipe.name)}</div>
+            <div class="bank-card-cat">${escHtml(recipe.category || '')}</div>
+          </div>
+          <button class="bank-card-menu-btn" title="Add to a day" aria-label="Add to day">⋯</button>
+        </div>
+        <div class="bank-card-dropdown">
+          <div class="bank-card-dropdown-header">Add to day</div>
+          ${dayButtons}
+        </div>`;
+
+      // Three-dot toggle
+      card.querySelector('.bank-card-menu-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        const dropdown = card.querySelector('.bank-card-dropdown');
+        const isOpen = dropdown.classList.contains('open');
+        closeAllBankDropdowns();
+        if (!isOpen) dropdown.classList.add('open');
+      });
 
       card.addEventListener('dragstart', e => {
         dragFromBank = true;
-        dragCard = { id: recipe.id, name: recipe.name }; // plain data, not DOM
+        dragCard = { id: recipe.id, name: recipe.name };
         card.classList.add('bank-dragging');
         e.dataTransfer.effectAllowed = 'copy';
         e.dataTransfer.setData('text/plain', recipe.id);
@@ -2136,6 +2256,12 @@
     document.getElementById('planner-week-label').textContent =
       `Week of ${plannerFmt(weekStart)} – ${plannerFmt(weekEnd)}`;
 
+    // Update nav button disabled states
+    const prevBtn = document.querySelector('.planner-week-nav button:first-child');
+    const nextBtn = document.querySelector('.planner-week-nav button:last-child');
+    if (prevBtn) prevBtn.disabled = plannerWeekOffset <= -PLANNER_WEEK_LIMIT;
+    if (nextBtn) nextBtn.disabled = plannerWeekOffset >= PLANNER_WEEK_LIMIT;
+
     const board = document.getElementById('planner-board');
     board.innerHTML = '';
 
@@ -2180,7 +2306,16 @@
   }
 
   function plannerChangeWeek(dir) {
-    plannerWeekOffset = dir === 0 ? 0 : plannerWeekOffset + dir;
+    if (dir === 0) {
+      plannerWeekOffset = 0;
+    } else {
+      const next = plannerWeekOffset + dir;
+      if (next < -PLANNER_WEEK_LIMIT || next > PLANNER_WEEK_LIMIT) {
+        showToast(`You can only plan up to ${PLANNER_WEEK_LIMIT} weeks ahead or behind.`);
+        return;
+      }
+      plannerWeekOffset = next;
+    }
     renderPlanner();
   }
 
