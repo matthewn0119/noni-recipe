@@ -605,6 +605,257 @@
       margin-top: 2px;
     }
 
+    /* ── MEAL PLANNER ── */
+    .planner-top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+    }
+    .planner-week-label {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      color: var(--rust);
+    }
+    .planner-week-nav {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .planner-week-nav button {
+      font-family: 'Lora', serif;
+      font-size: 0.82rem;
+      background: none;
+      color: var(--warm-brown);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .planner-week-nav button:hover { background: var(--parchment); }
+    .planner-week-nav button.current-week { background: var(--parchment); font-weight: 600; }
+
+    /* Two-panel layout */
+    .planner-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── Recipe Bank (left panel) ── */
+    .recipe-bank {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 14px var(--shadow);
+      position: sticky;
+      top: 16px;
+    }
+    .recipe-bank-header {
+      background: linear-gradient(135deg, var(--sage), #4f5e42);
+      padding: 12px 14px 10px;
+    }
+    .recipe-bank-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .recipe-bank-header p {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .recipe-bank-filters {
+      padding: 10px 10px 6px;
+      border-bottom: 1px solid #f0e4d0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .bank-filter {
+      font-family: 'Lora', serif;
+      font-size: 0.8rem;
+      color: var(--dark-brown);
+      background: #fdf9f4;
+      border: 1.5px solid #e0cdb5;
+      border-radius: 7px;
+      padding: 6px 9px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .bank-filter:focus { border-color: var(--rust); }
+    .recipe-bank-list {
+      max-height: 480px;
+      overflow-y: auto;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .recipe-bank-list::-webkit-scrollbar { width: 5px; }
+    .recipe-bank-list::-webkit-scrollbar-track { background: #f5e9d3; }
+    .recipe-bank-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* Bank source cards — draggable, stay in bank */
+    .bank-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 10px;
+      cursor: grab;
+      user-select: none;
+      transition: box-shadow 0.15s, background 0.15s;
+    }
+    .bank-card:hover {
+      background: #fff8f0;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .bank-card:active { cursor: grabbing; }
+    .bank-card.bank-dragging { opacity: 0.4; }
+    .bank-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--dark-brown);
+      line-height: 1.3;
+    }
+    .bank-card-cat {
+      font-family: 'Lora', serif;
+      font-size: 0.68rem;
+      color: var(--warm-brown);
+      margin-top: 2px;
+    }
+    .bank-empty {
+      text-align: center;
+      padding: 20px 10px;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: #b0906a;
+    }
+
+    /* ── Board (right panel) ── */
+    .planner-board {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      align-items: flex-start;
+    }
+    .planner-col {
+      flex: 0 0 148px;
+      display: flex;
+      flex-direction: column;
+    }
+    .planner-col-header {
+      background: linear-gradient(135deg, var(--warm-brown), #5c3318);
+      border-radius: 10px 10px 0 0;
+      padding: 9px 10px 7px;
+      text-align: center;
+    }
+    .planner-col-day {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .planner-col-date {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 2px;
+    }
+    .planner-drop-zone {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      min-height: 110px;
+      padding: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .planner-drop-zone.drag-over {
+      background: #fff8f0;
+      outline: 2px dashed var(--honey);
+      outline-offset: -4px;
+    }
+    .planner-drop-zone-empty {
+      color: #c9a97a;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.73rem;
+      text-align: center;
+      padding: 14px 6px;
+      pointer-events: none;
+    }
+
+    /* Meal cards (placed on board) */
+    .meal-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 9px;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+      transition: box-shadow 0.15s;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .meal-card:active { cursor: grabbing; }
+    .meal-card.dragging { opacity: 0.4; }
+    .meal-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--dark-brown);
+      line-height: 1.3;
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+    }
+    .meal-card-title:hover { color: var(--rust); }
+    .meal-card-remove {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 18px; height: 18px;
+      background: var(--rust);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 0.65rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .meal-card:hover .meal-card-remove { display: flex; }
+
+    /* Planner save bar */
+    .planner-save-bar {
+      display: flex; gap: 12px; align-items: center;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 820px) {
+      .planner-layout { grid-template-columns: 1fr; }
+      .recipe-bank { position: static; }
+      .recipe-bank-list { max-height: 220px; }
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 650px) {
       .card { padding: 22px 18px; }
@@ -635,6 +886,7 @@
   <button class="tab-btn active" onclick="showTab('browse')">📖 Browse Recipes</button>
   <button class="tab-btn" onclick="showTab('add')">✏️ Add a Recipe</button>
   <button class="tab-btn" onclick="showTab('ideas')">💡 My Ideas</button>
+  <button class="tab-btn" onclick="showTab('planner')">📅 Meal Planner</button>
   <button class="tab-btn" onclick="showTab('about')">🏡 About</button>
 </nav>
 
@@ -827,6 +1079,67 @@
     </div>
 
     <div id="ideas-grid" class="recipes-grid"></div>
+  </section>
+
+  <!-- ── MEAL PLANNER TAB ── -->
+  <section id="tab-planner" class="section">
+    <div class="card" style="margin-bottom: 0;">
+      <h2 class="section-title">Weekly <span>Meal Planner</span></h2>
+      <p class="section-desc">Filter and drag recipes from the bank onto any day. Click a placed card to view its recipe.</p>
+
+      <div class="planner-top-bar">
+        <span class="planner-week-label" id="planner-week-label">Week of …</span>
+        <div class="planner-week-nav">
+          <button onclick="plannerChangeWeek(-1)">← Prev</button>
+          <button onclick="plannerChangeWeek(0)" class="current-week">This Week</button>
+          <button onclick="plannerChangeWeek(1)">Next →</button>
+        </div>
+      </div>
+
+      <div class="planner-layout">
+
+        <!-- LEFT: Recipe Bank -->
+        <div class="recipe-bank">
+          <div class="recipe-bank-header">
+            <h3>📚 Recipe Bank</h3>
+            <p>Drag a recipe onto a day</p>
+          </div>
+          <div class="recipe-bank-filters">
+            <input  type="text"   class="bank-filter" id="bank-search"   placeholder="🔍 Search…"       oninput="renderBank()">
+            <select               class="bank-filter" id="bank-category" onchange="renderBank()">
+              <option value="">All Categories</option>
+              <option>Breakfast</option>
+              <option>Soups &amp; Stews</option>
+              <option>Main Dishes</option>
+              <option>Side Dishes</option>
+              <option>Salads</option>
+              <option>Breads &amp; Biscuits</option>
+              <option>Desserts</option>
+              <option>Canning &amp; Preserves</option>
+              <option>Dips &amp; Spreads</option>
+              <option>Drinks</option>
+              <option>Other</option>
+            </select>
+            <select               class="bank-filter" id="bank-author"   onchange="renderBank()">
+              <option value="">All Cooks</option>
+            </select>
+          </div>
+          <div class="recipe-bank-list" id="recipe-bank-list">
+            <div class="bank-empty">Loading recipes…</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Day columns -->
+        <div>
+          <div class="planner-board" id="planner-board"></div>
+          <div class="planner-save-bar">
+            <button class="btn-primary" onclick="savePlan()">Save Plan 📅</button>
+            <button class="btn-secondary" onclick="clearPlan()">Clear Week</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </section>
 
 </main>
@@ -1600,7 +1913,279 @@
       </div>`).join('');
   }
 
-  // render ideas when tab is opened
+  /* ══════════════════════════════════════════
+     MEAL PLANNER  — filterable bank + kanban board
+  ══════════════════════════════════════════ */
+  const PLANNER_KEY = 'noni_planner_v1';
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  let plannerWeekOffset = 0;
+  let plannerRecipes    = [];   // all recipes from Supabase
+  let dragCard          = null; // DOM element being dragged
+  let dragFromBank      = false; // true = drag originated from bank
+
+  // ── Week helpers ──────────────────────────────────────────────────
+  function plannerWeekStart(offset = 0) {
+    const now = new Date();
+    const sun = new Date(now);
+    sun.setDate(now.getDate() - now.getDay() + offset * 7);
+    sun.setHours(0,0,0,0);
+    return sun;
+  }
+  function plannerWeekKey(offset) {
+    const d = plannerWeekStart(offset);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function plannerFmt(date) {
+    return date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  }
+
+  // ── Storage ───────────────────────────────────────────────────────
+  // Plan shape: { day0:[recipeId,...], day1:[...], ... }
+  function loadPlan(weekKey) {
+    try {
+      const all = JSON.parse(localStorage.getItem(PLANNER_KEY)) || {};
+      return all[weekKey] || {};
+    } catch { return {}; }
+  }
+  function persistCurrentPlan() {
+    const weekKey = plannerWeekKey(plannerWeekOffset);
+    const plan = collectPlan();
+    try {
+      const all = JSON.parse(localStorage.getItem(PLANNER_KEY)) || {};
+      all[weekKey] = plan;
+      const keys = Object.keys(all).sort();
+      if (keys.length > 8) keys.slice(0, keys.length - 8).forEach(k => delete all[k]);
+      localStorage.setItem(PLANNER_KEY, JSON.stringify(all));
+    } catch(e) { console.error(e); }
+  }
+  function collectPlan() {
+    const plan = {};
+    document.querySelectorAll('.planner-drop-zone').forEach(zone => {
+      plan[zone.dataset.col] = [...zone.querySelectorAll('.meal-card')].map(c => c.dataset.recipeId);
+    });
+    return plan;
+  }
+
+  // ── Recipe Bank ───────────────────────────────────────────────────
+  function renderBank() {
+    const list     = document.getElementById('recipe-bank-list');
+    const search   = (document.getElementById('bank-search')?.value   || '').trim().toLowerCase();
+    const category = (document.getElementById('bank-category')?.value || '');
+    const author   = (document.getElementById('bank-author')?.value   || '');
+
+    const filtered = plannerRecipes.filter(r => {
+      if (search   && !r.name.toLowerCase().includes(search) && !(r.author||'').toLowerCase().includes(search)) return false;
+      if (category && r.category !== category) return false;
+      if (author   && r.author   !== author)   return false;
+      return true;
+    });
+
+    if (!filtered.length) {
+      list.innerHTML = '<div class="bank-empty">No recipes match your filters.</div>';
+      return;
+    }
+
+    list.innerHTML = '';
+    filtered.forEach(recipe => {
+      const card = document.createElement('div');
+      card.className = 'bank-card';
+      card.draggable = true;
+      card.dataset.recipeId = recipe.id;
+      card.innerHTML = `
+        <div class="bank-card-name">${CATEGORY_EMOJIS[recipe.category] || '🍴'} ${escHtml(recipe.name)}</div>
+        <div class="bank-card-cat">${escHtml(recipe.category || '')}</div>`;
+
+      card.addEventListener('dragstart', e => {
+        dragFromBank = true;
+        dragCard = { id: recipe.id, name: recipe.name }; // plain data, not DOM
+        card.classList.add('bank-dragging');
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/plain', recipe.id);
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('bank-dragging');
+        document.querySelectorAll('.planner-drop-zone').forEach(z => z.classList.remove('drag-over'));
+        dragCard = null;
+        dragFromBank = false;
+      });
+      list.appendChild(card);
+    });
+  }
+
+  // ── Meal card (placed on board) ───────────────────────────────────
+  function makeMealCard(recipe) {
+    const card = document.createElement('div');
+    card.className = 'meal-card';
+    card.draggable = true;
+    card.dataset.recipeId = recipe.id;
+
+    const title = document.createElement('button');
+    title.className = 'meal-card-title';
+    title.textContent = `${CATEGORY_EMOJIS[recipe.category] || '🍴'} ${recipe.name}`;
+    title.title = 'View recipe';
+    title.onclick = () => openModal(recipe.id);
+
+    const rem = document.createElement('button');
+    rem.className = 'meal-card-remove';
+    rem.innerHTML = '×';
+    rem.title = 'Remove';
+    rem.onclick = e => { e.stopPropagation(); card.remove(); updateEmptyStates(); };
+
+    card.appendChild(title);
+    card.appendChild(rem);
+
+    // Board-to-board drag (move, not copy)
+    card.addEventListener('dragstart', e => {
+      dragFromBank = false;
+      dragCard = card;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', recipe.id);
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.planner-drop-zone').forEach(z => z.classList.remove('drag-over'));
+      dragCard = null;
+      updateEmptyStates();
+    });
+    return card;
+  }
+
+  // ── Drop zones ────────────────────────────────────────────────────
+  function wireDropZone(zone) {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = dragFromBank ? 'copy' : 'move';
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', e => {
+      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+
+      if (dragFromBank && dragCard) {
+        // Copy from bank → create new meal card
+        const recipe = plannerRecipes.find(r => String(r.id) === String(dragCard.id));
+        if (!recipe) return;
+        const newCard = makeMealCard(recipe);
+        const after = getDragAfterElement(zone, e.clientY);
+        after ? zone.insertBefore(newCard, after) : zone.appendChild(newCard);
+
+      } else if (dragCard) {
+        // Move existing meal card between columns
+        const after = getDragAfterElement(zone, e.clientY);
+        after ? zone.insertBefore(dragCard, after) : zone.appendChild(dragCard);
+      }
+      updateEmptyStates();
+    });
+  }
+
+  function getDragAfterElement(zone, y) {
+    const items = [...zone.querySelectorAll('.meal-card:not(.dragging)')];
+    return items.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) return { offset, element: child };
+      return closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  function updateEmptyStates() {
+    document.querySelectorAll('.planner-drop-zone').forEach(zone => {
+      let empty = zone.querySelector('.planner-drop-zone-empty');
+      const hasCards = !!zone.querySelector('.meal-card');
+      if (hasCards && empty)  { empty.remove(); }
+      if (!hasCards && !empty) {
+        const p = document.createElement('p');
+        p.className = 'planner-drop-zone-empty';
+        p.textContent = 'Drop meals here';
+        zone.appendChild(p);
+      }
+    });
+  }
+
+  // ── Render board ──────────────────────────────────────────────────
+  async function renderPlanner() {
+    // Load recipes once
+    if (!plannerRecipes.length) {
+      const { data } = await db.from('recipes').select('id, name, category, author').order('name');
+      plannerRecipes = data || [];
+
+      // Populate author filter
+      const authors = [...new Set(plannerRecipes.map(r => r.author).filter(Boolean))].sort();
+      const authorSel = document.getElementById('bank-author');
+      if (authorSel) {
+        authors.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = opt.textContent = a;
+          authorSel.appendChild(opt);
+        });
+      }
+    }
+
+    renderBank();
+
+    const weekStart = plannerWeekStart(plannerWeekOffset);
+    const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+    const weekKey   = plannerWeekKey(plannerWeekOffset);
+    const plan      = loadPlan(weekKey);
+
+    document.getElementById('planner-week-label').textContent =
+      `Week of ${plannerFmt(weekStart)} – ${plannerFmt(weekEnd)}`;
+
+    const board = document.getElementById('planner-board');
+    board.innerHTML = '';
+
+    DAYS.forEach((dayName, di) => {
+      const date = new Date(weekStart);
+      date.setDate(weekStart.getDate() + di);
+
+      const col = document.createElement('div');
+      col.className = 'planner-col';
+
+      const hdr = document.createElement('div');
+      hdr.className = 'planner-col-header';
+      hdr.innerHTML = `<div class="planner-col-day">${dayName}</div><div class="planner-col-date">${plannerFmt(date)}</div>`;
+
+      const zone = document.createElement('div');
+      zone.className = 'planner-drop-zone';
+      zone.dataset.col = `day${di}`;
+
+      (plan[`day${di}`] || []).forEach(id => {
+        const recipe = plannerRecipes.find(r => String(r.id) === String(id));
+        if (recipe) zone.appendChild(makeMealCard(recipe));
+      });
+
+      wireDropZone(zone);
+      col.appendChild(hdr);
+      col.appendChild(zone);
+      board.appendChild(col);
+    });
+
+    updateEmptyStates();
+  }
+
+  // ── Save / clear ──────────────────────────────────────────────────
+  function savePlan() { persistCurrentPlan(); showToast('Meal plan saved! 📅'); }
+
+  function clearPlan() {
+    if (!confirm('Clear all meals for this week?')) return;
+    document.querySelectorAll('.planner-drop-zone .meal-card').forEach(c => c.remove());
+    updateEmptyStates();
+    persistCurrentPlan();
+    showToast('Week cleared.');
+  }
+
+  function plannerChangeWeek(dir) {
+    plannerWeekOffset = dir === 0 ? 0 : plannerWeekOffset + dir;
+    renderPlanner();
+  }
+
+  // render ideas when tab is opened — update showTab to handle planner
+
   function showTab(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1608,6 +2193,7 @@
     event.currentTarget.classList.add('active');
     if (id === 'browse') renderRecipes();
     if (id === 'ideas') renderIdeas();
+    if (id === 'planner') renderPlanner();
   }
   let toastTimer;
   function showToast(msg) {
