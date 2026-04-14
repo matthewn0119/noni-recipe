@@ -1021,6 +1021,18 @@
       flex-shrink: 0;
     }
 
+    .drag-handle {
+      cursor: grab;
+      padding: 8px;
+      color: var(--border);
+      font-size: 1.4rem;
+    }
+    .sortable-ghost { 
+      opacity: 0.3; 
+      background: var(--parchment) !important; 
+      border: 1px dashed var(--rust) !important;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 650px) {
       .card { padding: 22px 18px; }
@@ -1406,6 +1418,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- jsPDF for recipe PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- sortableJS for moving steps of recipes -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
   /* ══════════════════════════════════════════
@@ -1438,8 +1452,10 @@
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
-      <textarea placeholder="Step ${idx}: describe what to do…" rows="3">${escHtml(value)}</textarea>
-      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+      <div class="drag-handle" title="Drag to reorder">☰</div>
+      <textarea placeholder="Step description..." rows="2">${escHtml(value)}</textarea>
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>
+      `;
     list.appendChild(row);
   }
 
@@ -1704,12 +1720,10 @@
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
-      <div class="step-move-btns">
-        <button class="btn-move" title="Move up" onclick="moveEditStep(this, -1)">▲</button>
-        <button class="btn-move" title="Move down" onclick="moveEditStep(this, 1)">▼</button>
-      </div>
-      <textarea placeholder="Step ${idx}: describe what to do…" rows="3">${escHtml(value)}</textarea>
-      <button class="btn-remove" onclick="this.parentElement.remove(); updateEditStepButtons();" title="Remove">×</button>`;
+      <div class="drag-handle" title="Drag to reorder">☰</div>
+      <textarea placeholder="Step description..." rows="2">${escHtml(value)}</textarea>
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>
+      `;
     list.appendChild(row);
     updateEditStepButtons();
   }
@@ -1730,18 +1744,6 @@
 
     void row.offsetWidth; // reflow
 
-    if (dir === -1) {
-      // Moving up: row goes up, target goes down
-      row.classList.add('step-swap-up');
-      target.classList.add('step-swap-down');
-      list.insertBefore(row, target);
-    } else {
-      // Moving down: row goes down, target goes up
-      row.classList.add('step-swap-down');
-      target.classList.add('step-swap-up');
-      list.insertBefore(target, row);
-    }
-
     // Clean up animation classes after they finish
     setTimeout(() => {
       row.classList.remove('step-swap-up','step-swap-down');
@@ -1761,6 +1763,24 @@
       if (downBtn) downBtn.disabled = (i === rows.length - 1);
     });
   }
+
+  // Initialize Drag and Drop for Instructions
+    function initSortable() {
+      const options = {
+        animation: 250,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost'
+      };
+      
+      const stepsList = document.getElementById('steps-list');
+      const editStepsList = document.getElementById('e-steps-list');
+      
+      if (stepsList) new Sortable(stepsList, options);
+      if (editStepsList) new Sortable(editStepsList, options);
+    }
+
+    // Run initialization when the page finishes loading
+    window.addEventListener('load', initSortable);
 
   async function saveEdit() {
     const name = document.getElementById('e-name').value.trim();
