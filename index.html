@@ -608,7 +608,17 @@
     /* ── MEAL PLANNER ── */
     .planner-top-bar {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
+    }
+    @media (max-width: 480px) {
+      .planner-top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .planner-week-nav {
+        width: 100%;
+        justify-content: space-between;
+      }
     }
     .planner-week-label {
       font-family: 'Dancing Script', cursive;
@@ -814,16 +824,25 @@
 
     /* ── Board (right panel) ── */
     .planner-board {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 10px;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .planner-board {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    @media (max-width: 540px) {
+      .planner-board {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
     .planner-col {
-      flex: 0 0 148px;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
     .planner-col-header {
       background: linear-gradient(135deg, var(--warm-brown), #5c3318);
@@ -922,13 +941,13 @@
     /* Planner save bar */
     .planner-save-bar {
       display: flex; gap: 12px; align-items: center;
-      margin-top: 18px;
+      margin-top: 18px; flex-wrap: wrap;
     }
 
     @media (max-width: 820px) {
       .planner-layout { grid-template-columns: 1fr; }
       .recipe-bank { position: static; }
-      .recipe-bank-list { max-height: 220px; }
+      .recipe-bank-list { max-height: 180px; }
     }
 
     .btn-print-plan {
@@ -943,6 +962,64 @@
       transition: all 0.2s;
     }
     .btn-print-plan:hover { background: var(--parchment); border-color: var(--warm-brown); }
+
+    .idea-notes-edit {
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      color: var(--dark-brown);
+      background: #fffbf0;
+      border: 1.5px solid var(--honey);
+      border-radius: 8px;
+      padding: 10px 14px;
+      width: 100%;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.7;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-top: 6px;
+    }
+    .idea-notes-edit:focus {
+      border-color: var(--rust);
+      box-shadow: 0 0 0 3px rgba(192,80,42,0.12);
+    }
+
+    /* ── STEP SWAP ANIMATION ── */
+    .step-swap-up {
+      animation: swapUp 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .step-swap-down {
+      animation: swapDown 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes swapUp {
+      0%   { transform: translateY(60px); opacity: 0.4; }
+      100% { transform: translateY(0);    opacity: 1; }
+    }
+    @keyframes swapDown {
+      0%   { transform: translateY(-60px); opacity: 0.4; }
+      100% { transform: translateY(0);     opacity: 1; }
+    }
+    .btn-move {
+      background: none;
+      border: 1.5px solid #ddb89a;
+      color: var(--warm-brown);
+      border-radius: 6px;
+      width: 30px; height: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .btn-move:hover { background: var(--parchment); border-color: var(--warm-brown); }
+    .btn-move:disabled { opacity: 0.25; cursor: default; }
+    .step-move-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex-shrink: 0;
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 650px) {
@@ -987,6 +1064,7 @@
       <input type="text" id="search-input" placeholder="🔍  Search recipes…" oninput="renderRecipes()">
       <select id="filter-category" onchange="renderRecipes()">
         <option value="">All Categories</option>
+        <option>Appetizers</option>
         <option>Breakfast</option>
         <option>Soups & Stews</option>
         <option>Main Dishes</option>
@@ -996,7 +1074,7 @@
         <option>Desserts</option>
         <option>Canning & Preserves</option>
         <option>Dips &amp; Spreads</option>
-            <option>Drinks</option>
+        <option>Drinks</option>
         <option>Other</option>
       </select>
       <select id="filter-author" onchange="renderRecipes()">
@@ -1032,6 +1110,7 @@
         <div class="form-group">
           <label>Category</label>
           <select id="r-category">
+            <option>Appetizers</option>
             <option>Breakfast</option>
             <option>Soups & Stews</option>
             <option selected>Main Dishes</option>
@@ -1174,7 +1253,6 @@
     <div class="card" style="margin-bottom: 0;">
       <h2 class="section-title">Weekly <span>Meal Planner</span></h2>
       <p class="section-desc">Filter and drag recipes from the bank onto any day — or tap ⋯ on a card to add it to a specific day. Click a placed card to view its recipe.</p>
-      <p class="section-desc"><b>If you're on your phone, turn it sideways.</b> </p>
 
       <div class="planner-top-bar">
         <span class="planner-week-label" id="planner-week-label">Week of …</span>
@@ -1197,6 +1275,7 @@
             <input  type="text"   class="bank-filter" id="bank-search"   placeholder="🔍 Search…"       oninput="renderBank()">
             <select               class="bank-filter" id="bank-category" onchange="renderBank()">
               <option value="">All Categories</option>
+              <option>Appetizers</option>
               <option>Breakfast</option>
               <option>Soups &amp; Stews</option>
               <option>Main Dishes</option>
@@ -1267,6 +1346,7 @@
         <div class="form-group">
           <label>Category</label>
           <select id="e-category">
+            <option>Appetizers</option>
             <option>Breakfast</option>
             <option>Soups & Stews</option>
             <option>Main Dishes</option>
@@ -1428,7 +1508,7 @@
      RENDER BROWSE GRID
   ══════════════════════════════════════════ */
   const CATEGORY_EMOJIS = {
-    'Breakfast': '🍳', 'Soups & Stews': '🍲', 'Main Dishes': '🍽️',
+    'Appetizers': '🥨', 'Breakfast': '🍳', 'Soups & Stews': '🍲', 'Main Dishes': '🍽️',
     'Side Dishes': '🥗', 'Salads': '🥙', 'Breads & Biscuits': '🍞',
     'Desserts': '🍰', 'Canning & Preserves': '🫙', 'Dips & Spreads': '🫕', 'Drinks': '🥛', 'Other': '📌'
   };
@@ -1624,9 +1704,62 @@
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
+      <div class="step-move-btns">
+        <button class="btn-move" title="Move up" onclick="moveEditStep(this, -1)">▲</button>
+        <button class="btn-move" title="Move down" onclick="moveEditStep(this, 1)">▼</button>
+      </div>
       <textarea placeholder="Step ${idx}: describe what to do…" rows="3">${escHtml(value)}</textarea>
-      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+      <button class="btn-remove" onclick="this.parentElement.remove(); updateEditStepButtons();" title="Remove">×</button>`;
     list.appendChild(row);
+    updateEditStepButtons();
+  }
+
+  function moveEditStep(btn, dir) {
+    const row = btn.closest('.list-row');
+    const list = row.parentElement;
+    const rows = [...list.children];
+    const idx = rows.indexOf(row);
+    const targetIdx = idx + dir;
+    if (targetIdx < 0 || targetIdx >= rows.length) return;
+
+    const target = rows[targetIdx];
+
+    // Animate both rows
+    row.classList.remove('step-swap-up','step-swap-down');
+    target.classList.remove('step-swap-up','step-swap-down');
+
+    void row.offsetWidth; // reflow
+
+    if (dir === -1) {
+      // Moving up: row goes up, target goes down
+      row.classList.add('step-swap-up');
+      target.classList.add('step-swap-down');
+      list.insertBefore(row, target);
+    } else {
+      // Moving down: row goes down, target goes up
+      row.classList.add('step-swap-down');
+      target.classList.add('step-swap-up');
+      list.insertBefore(target, row);
+    }
+
+    // Clean up animation classes after they finish
+    setTimeout(() => {
+      row.classList.remove('step-swap-up','step-swap-down');
+      target.classList.remove('step-swap-up','step-swap-down');
+    }, 400);
+
+    updateEditStepButtons();
+  }
+
+  function updateEditStepButtons() {
+    const list = document.getElementById('e-steps-list');
+    if (!list) return;
+    const rows = [...list.children];
+    rows.forEach((row, i) => {
+      const [upBtn, downBtn] = row.querySelectorAll('.btn-move');
+      if (upBtn)   upBtn.disabled   = (i === 0);
+      if (downBtn) downBtn.disabled = (i === rows.length - 1);
+    });
   }
 
   async function saveEdit() {
@@ -1991,16 +2124,49 @@
     }
 
     grid.innerHTML = ideas.map(i => `
-      <div class="idea-card">
+      <div class="idea-card" id="idea-card-${i.id}">
         <div class="idea-card-title">${escHtml(i.name)}</div>
         ${i.url ? `<a class="idea-card-url" href="${escHtml(i.url)}" target="_blank" rel="noopener">🔗 ${escHtml(i.url)}</a>` : ''}
-        ${i.notes ? `<div class="idea-card-notes">${escHtml(i.notes)}</div>` : ''}
+        <div class="idea-card-notes-wrap" id="idea-notes-wrap-${i.id}">
+          ${i.notes ? `<div class="idea-card-notes" id="idea-notes-text-${i.id}">${escHtml(i.notes)}</div>` : `<div class="idea-card-notes" id="idea-notes-text-${i.id}" style="display:none;"></div>`}
+          <textarea class="idea-notes-edit" id="idea-notes-edit-${i.id}" rows="3" style="display:none;width:100%;margin-top:4px;">${escHtml(i.notes||'')}</textarea>
+        </div>
         <div class="idea-date">Saved ${escHtml(i.savedAt)}</div>
         <div class="idea-card-actions">
+          <button class="btn-secondary" style="font-size:0.82rem;padding:7px 14px;" onclick="toggleIdeaNotesEdit(${i.id})" id="idea-edit-btn-${i.id}">✏️ Edit Notes</button>
           ${i.url ? `<button class="btn-secondary" style="font-size:0.82rem;padding:7px 14px;" onclick="copyIdeaLink('${escHtml(i.url)}')">🔗 Copy Link</button>` : ''}
           <button class="btn-danger" style="font-size:0.82rem;padding:7px 14px;" onclick="deleteIdea(${i.id})">🗑 Delete</button>
         </div>
       </div>`).join('');
+  }
+
+  function toggleIdeaNotesEdit(id) {
+    const editArea = document.getElementById(`idea-notes-edit-${id}`);
+    const textEl   = document.getElementById(`idea-notes-text-${id}`);
+    const btn      = document.getElementById(`idea-edit-btn-${id}`);
+
+    const isEditing = editArea.style.display !== 'none';
+    if (isEditing) {
+      // Save
+      const newNotes = editArea.value.trim();
+      const ideas = loadIdeas();
+      const idea = ideas.find(i => i.id === id);
+      if (idea) {
+        idea.notes = newNotes;
+        persistIdeas(ideas);
+      }
+      textEl.textContent = newNotes;
+      textEl.style.display = newNotes ? '' : 'none';
+      editArea.style.display = 'none';
+      btn.textContent = '✏️ Edit Notes';
+      showToast('Notes updated! 📝');
+    } else {
+      // Enter edit mode
+      editArea.style.display = '';
+      textEl.style.display = 'none';
+      editArea.focus();
+      btn.textContent = '💾 Save Notes';
+    }
   }
 
   /* ══════════════════════════════════════════
