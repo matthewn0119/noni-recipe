@@ -931,6 +931,19 @@
       .recipe-bank-list { max-height: 220px; }
     }
 
+    .btn-print-plan {
+      font-family: 'Lora', serif;
+      font-size: 0.9rem;
+      background: none;
+      color: var(--warm-brown);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-print-plan:hover { background: var(--parchment); border-color: var(--warm-brown); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 650px) {
       .card { padding: 22px 18px; }
@@ -1210,6 +1223,7 @@
           <div class="planner-board" id="planner-board"></div>
           <div class="planner-save-bar">
             <button class="btn-primary" onclick="savePlan()">Save Plan 📅</button>
+            <button class="btn-print-plan" onclick="printWeekPDF()">🖨️ Print Week Menu</button>
             <button class="btn-secondary" onclick="clearPlan()">Clear Week</button>
           </div>
         </div>
@@ -2338,7 +2352,132 @@
     document.getElementById('toast').classList.add('show');
     toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
   }
-
+ /* ══════════════════════════════════════════
+     PRINT WEEK MENU PDF
+  ══════════════════════════════════════════ */
+  async function printWeekPDF() {
+    // Collect meals from the board
+    const zones = document.querySelectorAll('.planner-drop-zone');
+    const weekLabel = document.getElementById('planner-week-label').textContent;
+ 
+    // Gather day → meal names
+    const dayMeals = [];
+    zones.forEach(zone => {
+      const dayIndex = parseInt(zone.dataset.col.replace('day', ''));
+      const meals = [...zone.querySelectorAll('.meal-card-title')].map(el => {
+      const rawText = el.textContent.trim();
+      const mealName = rawText.replace(/^[^\s]+\s*/, '');
+      return mealName;
+});
+      dayMeals.push({ day: DAYS[dayIndex], meals });
+    });
+ 
+    const hasMeals = dayMeals.some(d => d.meals.length > 0);
+    if (!hasMeals) {
+      showToast('No meals planned for this week yet!');
+      return;
+    }
+ 
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+    const margin = 50;
+    const contentW = W - margin * 2;
+ 
+    // Background
+    doc.setFillColor(255, 255, 255);
+    doc.rect(-10, -10, W + 20, H + 20, 'F');
+ 
+    // Header band
+    doc.setFillColor(80, 50, 25);
+    doc.rect(0, 0, W, 88, 'F');
+    doc.setFillColor(180, 120, 40);
+    doc.rect(0, 88, W, 3, 'F');
+ 
+    // Title
+    doc.setFont('times', 'bold');
+    doc.setFontSize(26);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Weekly Menu", W / 2, 44, { align: 'center' });
+ 
+    // Week label
+    doc.setFont('times', 'italic');
+    doc.setFontSize(13);
+    doc.setTextColor(220, 200, 160);
+    doc.text(weekLabel, W / 2, 68, { align: 'center' });
+ 
+    // Border
+    doc.setDrawColor(180, 150, 100);
+    doc.setLineWidth(0.75);
+    doc.rect(margin - 10, 104, contentW + 20, H - 134, 'S');
+ 
+    // Corner accents
+    const drawC = (x, y, rx, ry) => {
+      doc.setDrawColor(180, 150, 100); doc.setLineWidth(1);
+      doc.line(x, y, x + rx, y); doc.line(x, y, x, y + ry);
+    };
+    drawC(margin - 10, 104, 20, 20);
+    drawC(W - margin + 10, 104, -20, 20);
+    drawC(margin - 10, H - 30, 20, -20);
+    drawC(W - margin + 10, H - 30, -20, -20);
+ 
+    // Draw day columns — 7 columns in a table layout
+    const tableTop = 118;
+    const tableH = H - 164;
+    const colW = contentW / 7;
+ 
+    // Column headers
+    doc.setFillColor(245, 233, 211);
+    doc.rect(margin, tableTop, contentW, 26, 'F');
+ 
+    dayMeals.forEach(({ day }, di) => {
+      const x = margin + di * colW;
+      doc.setDrawColor(180, 150, 100);
+      doc.setLineWidth(0.4);
+      doc.rect(x, tableTop, colW, tableH, 'S');
+ 
+      doc.setFont('times', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(80, 50, 25);
+      doc.text(day, x + colW / 2, tableTop + 17, { align: 'center' });
+    });
+ 
+    // Divider under headers
+    doc.setDrawColor(180, 150, 100);
+    doc.setLineWidth(0.5);
+    doc.line(margin, tableTop + 26, margin + contentW, tableTop + 26);
+ 
+    // Meal entries
+    dayMeals.forEach(({ meals }, di) => {
+      const x = margin + di * colW + 5;
+      let cellY = tableTop + 38;
+      const maxCellW = colW - 10;
+ 
+      meals.forEach(meal => {
+        // Bullet dot
+        doc.setFillColor(180, 120, 40);
+        doc.circle(x + 3, cellY - 2, 2, 'F');
+ 
+        doc.setFont('times', 'normal');
+        doc.setFontSize(8.5);
+        doc.setTextColor(40, 20, 10);
+        const lines = doc.splitTextToSize(meal, maxCellW - 10);
+        doc.text(lines, x + 10, cellY, { maxWidth: maxCellW - 10 });
+        cellY += lines.length * 12 + 8;
+      });
+    });
+ 
+    // Footer
+    doc.setFont('times', 'italic');
+    doc.setFontSize(9);
+    doc.setTextColor(160, 130, 90);
+    doc.text("Noni's Recipe Box", W / 2, H - 18, { align: 'center' });
+ 
+    doc.save(`weekly-menu-${weekLabel.replace(/[^a-z0-9]/gi,'_').toLowerCase()}.pdf`);
+    showToast('Weekly menu PDF downloaded! 🖨️');
+  }
+ 
   /* ══════════════════════════════════════════
      UTILS
   ══════════════════════════════════════════ */
