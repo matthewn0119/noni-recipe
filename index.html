@@ -379,6 +379,88 @@
       overflow: hidden;
     }
 
+    /* ── DIETARY TAGS ── */
+    .dietary-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .dietary-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: 'Lora', serif;
+      font-size: 0.72rem;
+      font-style: italic;
+      color: var(--sage);
+      background: #f0f4ed;
+      border: 1px solid #b5c5a8;
+      border-radius: 20px;
+      padding: 2px 9px;
+      white-space: nowrap;
+    }
+    /* Tags in modal header (on dark bg) */
+    .modal-dietary-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .modal-dietary-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Lora', serif;
+      font-size: 0.75rem;
+      font-style: italic;
+      color: #fff;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+    /* Tag checkboxes in form */
+    .tag-checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .tag-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      color: var(--dark-brown);
+      background: #fdf9f4;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .tag-checkbox-label:hover {
+      background: #f0f4ed;
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+    .tag-checkbox-label input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--sage);
+      cursor: pointer;
+    }
+    .tag-checkbox-label input[type="checkbox"]:checked + span {
+      font-weight: 600;
+    }
+    .tag-checkbox-label:has(input:checked) {
+      background: #e8efe4;
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -1172,6 +1254,16 @@
         </div>
 
         <div class="form-group full">
+          <label>Dietary Tags</label>
+          <div class="tag-checkbox-group" id="r-tags">
+            <label class="tag-checkbox-label"><input type="checkbox" value="vegetarian"><span>🥦 Vegetarian</span></label>
+            <label class="tag-checkbox-label"><input type="checkbox" value="gluten-free"><span>🌾 Gluten-Free</span></label>
+            <label class="tag-checkbox-label"><input type="checkbox" value="healthy"><span>💚 Healthy</span></label>
+            <label class="tag-checkbox-label"><input type="checkbox" value="nonis-favorite"><span>⭐ Noni's Favorite</span></label>
+          </div>
+        </div>
+
+        <div class="form-group full">
           <label>Notes & Tips</label>
           <textarea id="r-notes" rows="3" placeholder="Any substitutions, storage tips, or family secrets…"></textarea>
         </div>
@@ -1399,6 +1491,15 @@
           <button class="btn-add" onclick="addEditStep()">＋ Add Step</button>
         </div>
         <div class="form-group full">
+          <label>Dietary Tags</label>
+          <div class="tag-checkbox-group" id="e-tags">
+            <label class="tag-checkbox-label"><input type="checkbox" value="vegetarian"><span>🥦 Vegetarian</span></label>
+            <label class="tag-checkbox-label"><input type="checkbox" value="gluten-free"><span>🌾 Gluten-Free</span></label>
+            <label class="tag-checkbox-label"><input type="checkbox" value="healthy"><span>💚 Healthy</span></label>
+            <label class="tag-checkbox-label"><input type="checkbox" value="nonis-favorite"><span>⭐ Noni's Favorite</span></label>
+          </div>
+        </div>
+        <div class="form-group full">
           <label>Notes & Tips</label>
           <textarea id="e-notes" rows="3" placeholder="Any substitutions, storage tips, or family secrets…"></textarea>
         </div>
@@ -1482,17 +1583,21 @@
     if (!ingredients.length) { showToast('Add at least one ingredient!'); return; }
     if (!steps.length) { showToast('Add at least one instruction step!'); return; }
 
+    const dietary_tags = [...document.querySelectorAll('#r-tags input[type="checkbox"]:checked')]
+      .map(cb => cb.value);
+
     const recipe = {
       name,
-      author:      document.getElementById('r-author').value.trim() || 'Anonymous',
-      category:    document.getElementById('r-category').value,
-      servings:    document.getElementById('r-servings').value.trim(),
-      prep:        document.getElementById('r-prep').value.trim(),
-      cook:        document.getElementById('r-cook').value.trim(),
-      description: document.getElementById('r-desc').value.trim(),
-      notes:       document.getElementById('r-notes').value.trim(),
+      author:       document.getElementById('r-author').value.trim() || 'Anonymous',
+      category:     document.getElementById('r-category').value,
+      servings:     document.getElementById('r-servings').value.trim(),
+      prep:         document.getElementById('r-prep').value.trim(),
+      cook:         document.getElementById('r-cook').value.trim(),
+      description:  document.getElementById('r-desc').value.trim(),
+      notes:        document.getElementById('r-notes').value.trim(),
       ingredients,
       steps,
+      dietary_tags,
     };
 
     const { error } = await db.from('recipes').insert([recipe]);
@@ -1515,6 +1620,7 @@
     ['r-name','r-author','r-servings','r-prep','r-cook','r-desc','r-notes'].forEach(id => {
       document.getElementById(id).value = '';
     });
+    document.querySelectorAll('#r-tags input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.getElementById('ingredients-list').innerHTML = '';
     document.getElementById('steps-list').innerHTML = '';
     initFormRows();
@@ -1528,6 +1634,24 @@
     'Side Dishes': '🥗', 'Salads': '🥙', 'Breads & Biscuits': '🍞',
     'Desserts': '🍰', 'Canning & Preserves': '🫙', 'Dips & Spreads': '🫕', 'Drinks': '🥛', 'Other': '📌'
   };
+
+  const DIETARY_TAGS = {
+    'vegetarian':     { label: 'Vegetarian',     emoji: '🥦' },
+    'gluten-free':    { label: 'Gluten-Free',    emoji: '🌾' },
+    'healthy':        { label: 'Healthy',         emoji: '💚' },
+    'nonis-favorite': { label: "Noni's Favorite", emoji: '⭐' },
+  };
+
+  function renderTagPills(tags, modalStyle) {
+    if (!tags || !tags.length) return '';
+    var cls     = modalStyle ? 'modal-dietary-tag' : 'dietary-tag';
+    var wrapCls = modalStyle ? 'modal-dietary-tags' : 'dietary-tags';
+    var pills = tags.map(function(t) {
+      var info = DIETARY_TAGS[t];
+      return info ? '<span class="' + cls + '">' + info.emoji + ' ' + info.label + '</span>' : '';
+    }).filter(Boolean).join('');
+    return pills ? '<div class="' + wrapCls + '">' + pills + '</div>' : '';
+  }
 
   async function renderRecipes() {
     const grid = document.getElementById('recipes-grid');
@@ -1581,6 +1705,7 @@
           <div class="recipe-category-badge">${escHtml(r.category)}</div>
           <div class="recipe-card-title">${escHtml(r.name)}</div>
           <div class="recipe-card-author">by ${escHtml(r.author)}</div>
+          ${renderTagPills(r.dietary_tags)}
         </div>
         <div class="recipe-card-body">
           <div class="recipe-meta">
@@ -1603,8 +1728,9 @@
     if (error || !r) return;
 
     document.getElementById('modal-title').textContent = r.name;
-    document.getElementById('modal-author').textContent =
-      `by ${r.author}  ·  ${r.category}`;
+    document.getElementById('modal-author').innerHTML =
+      `by ${escHtml(r.author)}  ·  ${escHtml(r.category)}` +
+      renderTagPills(r.dietary_tags, true);
 
     const metaBits = [
       r.prep     ? `<span>⏱ <strong>Prep:</strong> ${escHtml(r.prep)}</span>` : '',
@@ -1697,6 +1823,11 @@
     sList.innerHTML = '';
     (r.steps || []).forEach(v => addEditStep(v));
     if (!sList.children.length) addEditStep();
+
+    // pre-check existing dietary tags
+    document.querySelectorAll('#e-tags input[type="checkbox"]').forEach(cb => {
+      cb.checked = Array.isArray(r.dietary_tags) && r.dietary_tags.includes(cb.value);
+    });
 
     // close view modal, open edit modal
     closeModalDirect();
@@ -1794,17 +1925,21 @@
     if (!ingredients.length) { showToast('Add at least one ingredient!'); return; }
     if (!steps.length) { showToast('Add at least one instruction step!'); return; }
 
+    const dietary_tags = [...document.querySelectorAll('#e-tags input[type="checkbox"]:checked')]
+      .map(cb => cb.value);
+
     const updates = {
       name,
-      author:      document.getElementById('e-author').value.trim() || 'Anonymous',
-      category:    document.getElementById('e-category').value,
-      servings:    document.getElementById('e-servings').value.trim(),
-      prep:        document.getElementById('e-prep').value.trim(),
-      cook:        document.getElementById('e-cook').value.trim(),
-      description: document.getElementById('e-desc').value.trim(),
-      notes:       document.getElementById('e-notes').value.trim(),
+      author:       document.getElementById('e-author').value.trim() || 'Anonymous',
+      category:     document.getElementById('e-category').value,
+      servings:     document.getElementById('e-servings').value.trim(),
+      prep:         document.getElementById('e-prep').value.trim(),
+      cook:         document.getElementById('e-cook').value.trim(),
+      description:  document.getElementById('e-desc').value.trim(),
+      notes:        document.getElementById('e-notes').value.trim(),
       ingredients,
       steps,
+      dietary_tags,
     };
 
     const { error } = await db.from('recipes').update(updates).eq('id', currentEditId);
