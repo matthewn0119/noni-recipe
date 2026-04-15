@@ -302,6 +302,44 @@
       background: #fff;
     }
     .filters select { min-width: 160px; background: #fff; }
+    .filter-tag-group {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .filter-tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Lora', serif;
+      font-size: 0.84rem;
+      color: var(--dark-brown);
+      background: #fffaf4;
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .filter-tag-chip:hover {
+      background: #f0f4ed;
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+    .filter-tag-chip input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--sage);
+      cursor: pointer;
+    }
+    .filter-tag-chip:has(input:checked) {
+      background: #e8efe4;
+      border-color: var(--sage);
+      color: var(--sage);
+      font-weight: 600;
+    }
 
     .recipes-grid {
       display: grid;
@@ -359,6 +397,22 @@
       border-radius: 20px;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+    }
+    .recipe-favorite-badge {
+      position: absolute;
+      top: 48px;
+      right: 14px;
+      max-width: 170px;
+      background: #3f6a34;
+      color: #fff;
+      border: 1px solid #315328;
+      font-family: 'Lora', serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(49, 83, 40, 0.22);
     }
     .recipe-card-body { padding: 16px 22px 20px; flex: 1; }
     .recipe-meta {
@@ -771,6 +825,38 @@
       flex-direction: column;
       gap: 7px;
     }
+    .bank-filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 2px;
+    }
+    .bank-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Lora', serif;
+      font-size: 0.72rem;
+      color: var(--dark-brown);
+      background: #fdf9f4;
+      border: 1.5px solid #e0cdb5;
+      border-radius: 999px;
+      padding: 5px 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .bank-filter-chip input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--sage);
+      cursor: pointer;
+    }
+    .bank-filter-chip:has(input:checked) {
+      background: #e8efe4;
+      border-color: var(--sage);
+      color: var(--sage);
+      font-weight: 600;
+    }
     .bank-filter {
       font-family: 'Lora', serif;
       font-size: 0.8rem;
@@ -824,6 +910,39 @@
       font-size: 0.68rem;
       color: var(--warm-brown);
       margin-top: 2px;
+    }
+    .bank-card-favorite {
+      display: inline-flex;
+      align-items: center;
+      font-family: 'Lora', serif;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: #fff;
+      background: #3f6a34;
+      border: 1px solid #315328;
+      border-radius: 999px;
+      padding: 3px 8px;
+      margin-top: 6px;
+    }
+    .bank-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .bank-card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: 'Lora', serif;
+      font-size: 0.64rem;
+      font-style: italic;
+      color: var(--sage);
+      background: #f0f4ed;
+      border: 1px solid #b5c5a8;
+      border-radius: 999px;
+      padding: 2px 7px;
+      white-space: nowrap;
     }
     .bank-empty {
       text-align: center;
@@ -1174,11 +1293,22 @@
       <select id="filter-author" onchange="renderRecipes()">
         <option value="">All Cooks</option>
       </select>
+      <select id="filter-favorite" onchange="renderRecipes()">
+        <option value="">All Recipes</option>
+        <option value="favorite">Favorites Only</option>
+        <option value="not-favorite">Not Favorites</option>
+      </select>
       <select id="filter-sort" onchange="renderRecipes()">
         <option value="newest">Newest First</option>
         <option value="oldest">Oldest First</option>
         <option value="alpha">A → Z</option>
       </select>
+      <div class="filter-tag-group" id="filter-dietary-tags">
+        <label class="filter-tag-chip"><input type="checkbox" value="vegetarian" onchange="renderRecipes()"><span>🥦 Vegetarian</span></label>
+        <label class="filter-tag-chip"><input type="checkbox" value="gluten-free" onchange="renderRecipes()"><span>🌾 Gluten-Free</span></label>
+        <label class="filter-tag-chip"><input type="checkbox" value="healthy" onchange="renderRecipes()"><span>💚 Healthy</span></label>
+        <label class="filter-tag-chip"><input type="checkbox" value="nonis-favorite" onchange="renderRecipes()"><span>🌟 Noni's Favorites</span></label>
+      </div>
     </div>
     <div class="recipes-grid" id="recipes-grid"></div>
   </section>
@@ -1198,7 +1328,14 @@
 
         <div class="form-group">
           <label>Your Name</label>
-          <input type="text" id="r-author" placeholder="e.g. Grandma Rose">
+          <input type="text" id="r-author" placeholder="e.g. Grandma Rose" oninput="syncFavoriteLabel('r')">
+        </div>
+
+        <div class="form-group full">
+          <label class="tag-checkbox-label" style="width:fit-content;">
+            <input type="checkbox" id="r-is-favorite" onchange="handleFavoriteToggle('r')">
+            <span>Mark this as one of <span id="r-favorite-owner">This cook's</span> 5 favorites</span>
+          </label>
         </div>
 
         <div class="form-group">
@@ -1395,6 +1532,17 @@
             <select               class="bank-filter" id="bank-author"   onchange="renderBank()">
               <option value="">All Cooks</option>
             </select>
+            <select               class="bank-filter" id="bank-favorite" onchange="renderBank()">
+              <option value="">All Recipes</option>
+              <option value="favorite">Favorites Only</option>
+              <option value="not-favorite">Not Favorites</option>
+            </select>
+            <div class="bank-filter-tags" id="bank-dietary-tags">
+              <label class="bank-filter-chip"><input type="checkbox" value="vegetarian" onchange="renderBank()"><span>🥦 Vegetarian</span></label>
+              <label class="bank-filter-chip"><input type="checkbox" value="gluten-free" onchange="renderBank()"><span>🌾 Gluten-Free</span></label>
+              <label class="bank-filter-chip"><input type="checkbox" value="healthy" onchange="renderBank()"><span>💚 Healthy</span></label>
+              <label class="bank-filter-chip"><input type="checkbox" value="nonis-favorite" onchange="renderBank()"><span>🌟 Noni's Favorites</span></label>
+            </div>
           </div>
           <div class="recipe-bank-list" id="recipe-bank-list">
             <div class="bank-empty">Loading recipes…</div>
@@ -1445,7 +1593,13 @@
         </div>
         <div class="form-group">
           <label>Your Name</label>
-          <input type="text" id="e-author" placeholder="e.g. Noni">
+          <input type="text" id="e-author" placeholder="e.g. Noni" oninput="syncFavoriteLabel('e')">
+        </div>
+        <div class="form-group full">
+          <label class="tag-checkbox-label" style="width:fit-content;">
+            <input type="checkbox" id="e-is-favorite" onchange="handleFavoriteToggle('e')">
+            <span>Mark this as one of <span id="e-favorite-owner">This cook's</span> 5 favorites</span>
+          </label>
         </div>
         <div class="form-group">
           <label>Category</label>
@@ -1567,6 +1721,8 @@
     if (!sList.children.length) addStep();
   }
   initFormRows();
+  syncFavoriteLabel('r');
+  syncFavoriteLabel('e');
 
   /* ══════════════════════════════════════════
      SAVE RECIPE
@@ -1585,10 +1741,26 @@
 
     const dietary_tags = [...document.querySelectorAll('#r-tags input[type="checkbox"]:checked')]
       .map(cb => cb.value);
+    const author = getCookName(document.getElementById('r-author').value);
+    const is_favorite = document.getElementById('r-is-favorite').checked;
+
+    if (is_favorite) {
+      try {
+        const allowed = await ensureFavoriteLimit(author);
+        if (!allowed) {
+          document.getElementById('r-is-favorite').checked = false;
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+        showToast('Could not verify favorite limit. Please try again.');
+        return;
+      }
+    }
 
     const recipe = {
       name,
-      author:       document.getElementById('r-author').value.trim() || 'Anonymous',
+      author,
       category:     document.getElementById('r-category').value,
       servings:     document.getElementById('r-servings').value.trim(),
       prep:         document.getElementById('r-prep').value.trim(),
@@ -1598,6 +1770,7 @@
       ingredients,
       steps,
       dietary_tags,
+      is_favorite,
     };
 
     const { error } = await db.from('recipes').insert([recipe]);
@@ -1620,6 +1793,8 @@
     ['r-name','r-author','r-servings','r-prep','r-cook','r-desc','r-notes'].forEach(id => {
       document.getElementById(id).value = '';
     });
+    document.getElementById('r-is-favorite').checked = false;
+    syncFavoriteLabel('r');
     document.querySelectorAll('#r-tags input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.getElementById('ingredients-list').innerHTML = '';
     document.getElementById('steps-list').innerHTML = '';
@@ -1634,6 +1809,7 @@
     'Side Dishes': '🥗', 'Salads': '🥙', 'Breads & Biscuits': '🍞',
     'Desserts': '🍰', 'Canning & Preserves': '🫙', 'Dips & Spreads': '🫕', 'Drinks': '🥛', 'Other': '📌'
   };
+  const MAX_FAVORITES_PER_COOK = 5;
 
   const DIETARY_TAGS = {
     'vegetarian':     { label: 'Vegetarian',     emoji: '🥦' },
@@ -1641,6 +1817,94 @@
     'healthy':        { label: 'Healthy',         emoji: '💚' },
     'nonis-favorite': { label: "Noni's Favorites", emoji: '🌟' },
   };
+
+  function getCookName(rawName) {
+    return (rawName || '').trim() || 'Anonymous';
+  }
+
+  function getPossessiveName(name) {
+    const cleanName = getCookName(name);
+    return /s$/i.test(cleanName) ? `${cleanName}'` : `${cleanName}'s`;
+  }
+
+  function renderFavoriteBadge(recipe, modalStyle) {
+    if (!recipe || !recipe.is_favorite) return '';
+    const label = `${getPossessiveName(recipe.author)} Favorites`;
+    if (modalStyle) {
+      return `<div class="modal-dietary-tags"><span class="modal-dietary-tag">${escHtml(label)}</span></div>`;
+    }
+    return `<div class="recipe-favorite-badge">${escHtml(label)}</div>`;
+  }
+
+  function renderBankFavoriteBadge(recipe) {
+    if (!recipe || !recipe.is_favorite) return '';
+    return `<div class="bank-card-favorite">${escHtml(getPossessiveName(recipe.author))} Favorites</div>`;
+  }
+
+  function renderBankTagPills(tags) {
+    if (!tags || !tags.length) return '';
+    const pills = tags.map(function(t) {
+      const info = DIETARY_TAGS[t];
+      return info ? `<span class="bank-card-tag">${info.emoji} ${info.label}</span>` : '';
+    }).filter(Boolean).join('');
+    return pills ? `<div class="bank-card-tags">${pills}</div>` : '';
+  }
+
+  function getFavoriteFieldIds(mode) {
+    return {
+      author: `${mode}-author`,
+      checkbox: `${mode}-is-favorite`,
+      label: `${mode}-favorite-owner`,
+    };
+  }
+
+  function syncFavoriteLabel(mode) {
+    const ids = getFavoriteFieldIds(mode);
+    const author = document.getElementById(ids.author)?.value || '';
+    const label = document.getElementById(ids.label);
+    if (label) label.textContent = getPossessiveName(author);
+  }
+
+  async function countCookFavorites(author, excludeId) {
+    let query = db
+      .from('recipes')
+      .select('id', { count: 'exact', head: true })
+      .eq('author', getCookName(author))
+      .eq('is_favorite', true);
+
+    if (excludeId) query = query.neq('id', excludeId);
+
+    const { count, error } = await query;
+    if (error) throw error;
+    return count || 0;
+  }
+
+  async function ensureFavoriteLimit(author, excludeId) {
+    const favoriteCount = await countCookFavorites(author, excludeId);
+    if (favoriteCount >= MAX_FAVORITES_PER_COOK) {
+      alert(`Each cook can only have ${MAX_FAVORITES_PER_COOK} favorite meals. Please unmark one of ${getPossessiveName(author)} current favorites before adding another.`);
+      return false;
+    }
+    return true;
+  }
+
+  async function handleFavoriteToggle(mode) {
+    const ids = getFavoriteFieldIds(mode);
+    const checkbox = document.getElementById(ids.checkbox);
+    if (!checkbox || !checkbox.checked) return;
+
+    try {
+      const allowed = await ensureFavoriteLimit(
+        document.getElementById(ids.author)?.value || '',
+        mode === 'e' ? currentEditId : null
+      );
+      if (!allowed) checkbox.checked = false;
+    } catch (error) {
+      console.error(error);
+      checkbox.checked = false;
+      showToast('Could not verify favorite limit. Please try again.');
+    }
+  }
 
   function renderTagPills(tags, modalStyle) {
     if (!tags || !tags.length) return '';
@@ -1660,7 +1924,10 @@
     const q = document.getElementById('search-input').value.toLowerCase();
     const cat = document.getElementById('filter-category').value;
     const author = document.getElementById('filter-author').value;
+    const favoriteFilter = document.getElementById('filter-favorite').value;
     const sort = document.getElementById('filter-sort').value;
+    const dietaryFilters = [...document.querySelectorAll('#filter-dietary-tags input[type="checkbox"]:checked')]
+      .map(cb => cb.value);
 
     let query = db.from('recipes').select('*');
     if (sort === 'newest') query = query.order('created_at', { ascending: false });
@@ -1687,6 +1954,13 @@
       (r.author || '').toLowerCase().includes(q));
     if (cat) filtered = filtered.filter(r => r.category === cat);
     if (author) filtered = filtered.filter(r => r.author === author);
+    if (favoriteFilter === 'favorite') filtered = filtered.filter(r => !!r.is_favorite);
+    if (favoriteFilter === 'not-favorite') filtered = filtered.filter(r => !r.is_favorite);
+    if (dietaryFilters.length) {
+      filtered = filtered.filter(r =>
+        dietaryFilters.every(tag => Array.isArray(r.dietary_tags) && r.dietary_tags.includes(tag))
+      );
+    }
 
     if (!filtered.length) {
       grid.innerHTML = `
@@ -1703,6 +1977,7 @@
         <div class="recipe-card-top">
           <span class="recipe-emoji">${CATEGORY_EMOJIS[r.category] || '🍴'}</span>
           <div class="recipe-category-badge">${escHtml(r.category)}</div>
+          ${renderFavoriteBadge(r)}
           <div class="recipe-card-title">${escHtml(r.name)}</div>
           <div class="recipe-card-author">by ${escHtml(r.author)}</div>
           ${renderTagPills(r.dietary_tags)}
@@ -1730,6 +2005,7 @@
     document.getElementById('modal-title').textContent = r.name;
     document.getElementById('modal-author').innerHTML =
       `by ${escHtml(r.author)}  ·  ${escHtml(r.category)}` +
+      renderFavoriteBadge(r, true) +
       renderTagPills(r.dietary_tags, true);
 
     const metaBits = [
@@ -1807,6 +2083,8 @@
     document.getElementById('e-cook').value     = r.cook || '';
     document.getElementById('e-desc').value     = r.description || '';
     document.getElementById('e-notes').value    = r.notes || '';
+    document.getElementById('e-is-favorite').checked = !!r.is_favorite;
+    syncFavoriteLabel('e');
 
     // set category
     const catSelect = document.getElementById('e-category');
@@ -1927,10 +2205,26 @@
 
     const dietary_tags = [...document.querySelectorAll('#e-tags input[type="checkbox"]:checked')]
       .map(cb => cb.value);
+    const author = getCookName(document.getElementById('e-author').value);
+    const is_favorite = document.getElementById('e-is-favorite').checked;
+
+    if (is_favorite) {
+      try {
+        const allowed = await ensureFavoriteLimit(author, currentEditId);
+        if (!allowed) {
+          document.getElementById('e-is-favorite').checked = false;
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+        showToast('Could not verify favorite limit. Please try again.');
+        return;
+      }
+    }
 
     const updates = {
       name,
-      author:       document.getElementById('e-author').value.trim() || 'Anonymous',
+      author,
       category:     document.getElementById('e-category').value,
       servings:     document.getElementById('e-servings').value.trim(),
       prep:         document.getElementById('e-prep').value.trim(),
@@ -1940,6 +2234,7 @@
       ingredients,
       steps,
       dietary_tags,
+      is_favorite,
     };
 
     const { error } = await db.from('recipes').update(updates).eq('id', currentEditId);
@@ -2405,11 +2700,17 @@
     const search   = (document.getElementById('bank-search')?.value   || '').trim().toLowerCase();
     const category = (document.getElementById('bank-category')?.value || '');
     const author   = (document.getElementById('bank-author')?.value   || '');
+    const favorite = (document.getElementById('bank-favorite')?.value || '');
+    const dietaryFilters = [...document.querySelectorAll('#bank-dietary-tags input[type="checkbox"]:checked')]
+      .map(cb => cb.value);
 
     const filtered = plannerRecipes.filter(r => {
       if (search   && !r.name.toLowerCase().includes(search) && !(r.author||'').toLowerCase().includes(search)) return false;
       if (category && r.category !== category) return false;
       if (author   && r.author   !== author)   return false;
+      if (favorite === 'favorite' && !r.is_favorite) return false;
+      if (favorite === 'not-favorite' && r.is_favorite) return false;
+      if (dietaryFilters.length && !dietaryFilters.every(tag => Array.isArray(r.dietary_tags) && r.dietary_tags.includes(tag))) return false;
       return true;
     });
 
@@ -2435,6 +2736,8 @@
           <div class="bank-card-text">
             <div class="bank-card-name">${CATEGORY_EMOJIS[recipe.category] || '🍴'} ${escHtml(recipe.name)}</div>
             <div class="bank-card-cat">${escHtml(recipe.category || '')}</div>
+            ${renderBankFavoriteBadge(recipe)}
+            ${renderBankTagPills(recipe.dietary_tags)}
           </div>
           <button class="bank-card-menu-btn" title="Add to a day" aria-label="Add to day">⋯</button>
         </div>
@@ -2567,13 +2870,14 @@
   async function renderPlanner() {
     // Load recipes once
     if (!plannerRecipes.length) {
-      const { data } = await db.from('recipes').select('id, name, category, author').order('name');
+      const { data } = await db.from('recipes').select('id, name, category, author, dietary_tags, is_favorite').order('name');
       plannerRecipes = data || [];
 
       // Populate author filter
       const authors = [...new Set(plannerRecipes.map(r => r.author).filter(Boolean))].sort();
       const authorSel = document.getElementById('bank-author');
       if (authorSel) {
+        authorSel.innerHTML = '<option value="">All Cooks</option>';
         authors.forEach(a => {
           const opt = document.createElement('option');
           opt.value = opt.textContent = a;
