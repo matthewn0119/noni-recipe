@@ -1950,15 +1950,15 @@
     list.appendChild(row);
   }
 
-  function initFormRows() {
+  function initFormRows() { //forms rows, if no row, defualt to add button
     const iList = document.getElementById('ingredients-list');
     const sList = document.getElementById('steps-list');
     if (!iList.children.length) addIngredient();
     if (!sList.children.length) addStep();
   }
   initFormRows();
-  syncFavoriteLabel('r');
-  syncFavoriteLabel('e');
+  // syncFavoriteLabel('r'); 
+  // syncFavoriteLabel('e');
 
   /* ══════════════════════════════════════════
      SAVE RECIPE
@@ -1976,7 +1976,7 @@
     if (!steps.length) { showToast('Add at least one instruction step!'); return; }
 
     const dietary_tags = [...document.querySelectorAll('#r-tags input[type="checkbox"]:checked')]
-      .map(cb => cb.value);
+      .map(checkbox => checkbox.value);
     const author = getCookName(document.getElementById('r-author').value);
     const is_favorite = document.getElementById('r-is-favorite').checked;
 
@@ -2031,7 +2031,7 @@
     });
     document.getElementById('r-is-favorite').checked = false;
     syncFavoriteLabel('r');
-    document.querySelectorAll('#r-tags input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('#r-tags input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
     document.getElementById('ingredients-list').innerHTML = '';
     document.getElementById('steps-list').innerHTML = '';
     initFormRows();
@@ -2163,7 +2163,7 @@
     const favoriteFilter = document.getElementById('filter-favorite').value;
     const sort = document.getElementById('filter-sort').value;
     const dietaryFilters = [...document.querySelectorAll('#filter-dietary-tags input[type="checkbox"]:checked')]
-      .map(cb => cb.value);
+      .map(checkbox => checkbox.value);
 
     let query = db.from('recipes').select('*');
     if (sort === 'newest') query = query.order('created_at', { ascending: false });
@@ -2339,8 +2339,8 @@
     if (!sList.children.length) addEditStep();
 
     // pre-check existing dietary tags
-    document.querySelectorAll('#e-tags input[type="checkbox"]').forEach(cb => {
-      cb.checked = Array.isArray(r.dietary_tags) && r.dietary_tags.includes(cb.value);
+    document.querySelectorAll('#e-tags input[type="checkbox"]').forEach(checkbox => {
+      checkbox.checked = Array.isArray(r.dietary_tags) && r.dietary_tags.includes(checkbox.value);
     });
 
     // close view modal, open edit modal
