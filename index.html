@@ -63,7 +63,10 @@
       letter-spacing: 1px;
       line-height: 1.1;
     }
-    header h1 span { color: var(--honey); font-style: italic; }
+    header h1 span { 
+      color: var(--honey); 
+      font-style: italic; }
+
     .header-sub {
       font-family: 'Lora', serif;
       font-style: italic;
@@ -73,11 +76,22 @@
     }
     /* decorative border lines */
     .header-line {
-      display: flex; align-items: center; gap: 12px;
-      margin: 14px auto 0; max-width: 400px;
+      display: flex; 
+      align-items: center; 
+      gap: 12px;
+      margin: 14px auto 0; 
+      max-width: 400px;
     }
-    .header-line span { flex: 1; height: 1px; background: var(--honey); opacity: 0.5; }
-    .header-line i { color: var(--honey); font-size: 1.1rem; }
+
+    .header-line span { 
+      flex: 1; 
+      height: 1px; 
+      background: var(--honey); 
+      opacity: 0.5; }
+
+    .header-line i { color: var(--honey); 
+      font-size: 1.1rem; 
+    }
 
     /* ── NAV TABS ── */
     .tabs {
@@ -104,7 +118,10 @@
       transition: all 0.2s;
       white-space: nowrap;
     }
-    .tab-btn:hover { color: var(--rust); background: #fff8f0; }
+    .tab-btn:hover { 
+      color: var(--rust); 
+      background: #fff8f0; 
+    }
     .tab-btn.active {
       color: var(--rust);
       border-bottom-color: var(--rust);
@@ -118,7 +135,11 @@
     }
 
     /* ── MAIN LAYOUT ── */
-    main { max-width: 1100px; margin: 0 auto; padding: 36px 24px 60px; }
+    main { 
+      max-width: 1100px; 
+      margin: 0 auto; 
+      padding: 36px 24px 60px; 
+    }
 
     /* ── SECTION ── */
     .section { display: none; }
@@ -147,7 +168,10 @@
       color: var(--warm-brown);
       margin-bottom: 6px;
     }
-    .section-title span { font-style: italic; color: var(--rust); }
+    .section-title span { 
+      font-style: italic; 
+      color: var(--rust); 
+    }
     .section-desc {
       font-style: italic;
       color: #7a6048;
@@ -161,7 +185,11 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+    }
     .form-group.full { grid-column: 1 / -1; }
     label {
       font-family: 'Playfair Display', serif;
@@ -171,6 +199,7 @@
       letter-spacing: 0.3px;
     }
     label .required { color: var(--rust); }
+
     input[type="text"], input[type="number"], select, textarea {
       font-family: 'Lora', serif;
       font-size: 0.95rem;
@@ -188,10 +217,17 @@
       box-shadow: 0 0 0 3px rgba(192,80,42,0.12);
       background: #fff;
     }
-    textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+    textarea { 
+      resize: vertical; 
+      min-height: 120px; 
+      line-height: 1.7; 
+    }
 
     /* Ingredient & Step rows */
-    .dynamic-list { display: flex; flex-direction: column; gap: 10px; }
+    .dynamic-list { display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+    }
     .list-row {
       display: flex;
       gap: 10px;
@@ -219,8 +255,10 @@
       transition: all 0.2s;
       line-height: 1;
     }
-    .btn-remove:hover { background: var(--rust); color: #fff; border-color: var(--rust); }
-
+    .btn-remove:hover { background: var(--rust); 
+      color: #fff; 
+      border-color: var(--rust); 
+    }
     .btn-add {
       display: inline-flex; align-items: center; gap: 8px;
       font-family: 'Lora', serif;
@@ -234,7 +272,10 @@
       margin-top: 4px;
       transition: all 0.2s;
     }
-    .btn-add:hover { background: var(--sage); color: #fff; }
+    .btn-add:hover { 
+      background: var(--sage); 
+      color: #fff; 
+    }
 
     /* Buttons */
     .btn-primary {
@@ -251,7 +292,10 @@
       box-shadow: 0 4px 16px rgba(192,80,42,0.3);
       transition: all 0.2s;
     }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(192,80,42,0.4); }
+    .btn-primary:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 24px rgba(192,80,42,0.4); 
+    }
     .btn-primary:active { transform: translateY(0); }
 
     .btn-secondary {
@@ -265,8 +309,10 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-secondary:hover { background: var(--parchment); border-color: var(--warm-brown); }
-
+    .btn-secondary:hover { 
+      background: var(--parchment); 
+      border-color: var(--warm-brown); 
+    }
     .form-actions {
       display: flex; gap: 14px; align-items: center;
       margin-top: 30px; padding-top: 24px;
@@ -290,9 +336,13 @@
       z-index: 9999;
       display: flex; align-items: center; gap: 10px;
     }
-    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.show { 
+      transform: translateY(0); 
+      opacity: 1; 
+    }
 
     /* ── RECIPE CARDS GRID ── */
+    /* FILTERS */
     .filters {
       display: flex; gap: 12px; flex-wrap: wrap;
       margin-bottom: 28px; align-items: center;
@@ -301,7 +351,10 @@
       flex: 1; min-width: 200px;
       background: #fff;
     }
-    .filters select { min-width: 160px; background: #fff; }
+    .filters select { 
+      min-width: 160px; 
+      background: #fff; 
+    }
     .filter-tag-group {
       width: 100%;
       display: flex;
@@ -340,13 +393,12 @@
       color: var(--sage);
       font-weight: 600;
     }
-
+    /* RECIPES */
     .recipes-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 24px;
     }
-
     .recipe-card {
       background: #fff;
       border: 1px solid var(--border);
@@ -414,14 +466,20 @@
       text-align: center;
       box-shadow: 0 2px 8px rgba(49, 83, 40, 0.22);
     }
-    .recipe-card-body { padding: 16px 22px 20px; flex: 1; }
+    .recipe-card-body { 
+      padding: 16px 22px 20px; 
+      flex: 1;
+    }
     .recipe-meta {
       display: flex; gap: 16px; flex-wrap: wrap;
       font-size: 0.82rem;
       color: #7a6048;
       margin-bottom: 10px;
     }
-    .recipe-meta span { display: flex; align-items: center; gap: 4px; }
+    .recipe-meta span { display: flex; 
+      align-items: center; 
+      gap: 4px; 
+    }
     .recipe-desc {
       font-style: italic;
       font-size: 0.88rem;
@@ -520,7 +578,10 @@
       padding: 60px 20px;
       color: #a08060;
     }
-    .empty-state .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state .empty-icon { 
+      font-size: 4rem; 
+      margin-bottom: 16px; 
+    }
     .empty-state h3 {
       font-family: 'Playfair Display', serif;
       font-size: 1.4rem;
@@ -540,7 +601,10 @@
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s;
     }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-overlay.open { 
+      opacity: 1; 
+      pointer-events: all; 
+    }
     .modal {
       background: #ffffff;
       border-radius: 16px;
@@ -603,6 +667,7 @@
       margin-bottom: 14px;
       font-style: italic;
     }
+    /* INGRIDIENTS */
     .ingredients-list {
       list-style: none;
       display: grid;
@@ -622,6 +687,7 @@
       margin-top: 5px;
       flex-shrink: 0;
     }
+    /* STEPS */
     .steps-list {
       display: flex; flex-direction: column; gap: 16px;
       margin-bottom: 24px;
@@ -642,7 +708,55 @@
       flex-shrink: 0;
     }
     .step-text { font-size: 0.93rem; line-height: 1.7; padding-top: 4px; }
+    
+    /* ── STEP SWAP ANIMATION ── */
+    .step-swap-up {
+      animation: swapUp 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .step-swap-down {
+      animation: swapDown 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes swapUp {
+      0%   { transform: translateY(60px); opacity: 0.4; }
+      100% { transform: translateY(0);    opacity: 1; }
+    }
+    @keyframes swapDown {
+      0%   { transform: translateY(-60px); opacity: 0.4; }
+      100% { transform: translateY(0);     opacity: 1; }
+    }
+    .btn-move {
+      background: none;
+      border: 1.5px solid #ddb89a;
+      color: var(--warm-brown);
+      border-radius: 6px;
+      width: 30px; height: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .btn-move:hover { background: var(--parchment); border-color: var(--warm-brown); }
+    .btn-move:disabled { opacity: 0.25; cursor: default; }
+    .step-move-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex-shrink: 0;
+    }
 
+    .drag-handle {
+      cursor: grab;
+      padding: 8px;
+      color: var(--border);
+      font-size: 1.4rem;
+    }
+    .sortable-ghost { 
+      opacity: 0.3; 
+      background: var(--parchment) !important; 
+      border: 1px dashed var(--rust) !important;
+    }
     .modal-notes {
       background: #fffbf0;
       border-left: 4px solid var(--honey);
@@ -659,6 +773,7 @@
       padding-top: 20px;
       border-top: 1px dashed var(--border);
     }
+    /* DELETE BUTTON */
     .btn-danger {
       font-family: 'Lora', serif;
       font-size: 0.88rem;
@@ -670,31 +785,10 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-danger:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
-
-    /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .about-box {
-      background: var(--parchment);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-    }
-    .about-box h3 {
-      font-family: 'Playfair Display', serif;
-      color: var(--warm-brown);
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .about-box p { font-size: 0.92rem; line-height: 1.7; color: #5a4030; }
-    .about-quote {
-      grid-column: 1 / -1;
-      text-align: center;
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.6rem;
-      color: var(--rust);
-      padding: 10px 0;
+    .btn-danger:hover { 
+      background: #c0392b; 
+      color: #fff; 
+      border-color: #c0392b; 
     }
 
     /* ── IDEA CARDS ── */
@@ -710,7 +804,10 @@
       position: relative;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .idea-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px var(--shadow); }
+    .idea-card:hover { 
+      transform: translateY(-3px); 
+      box-shadow: 0 10px 28px var(--shadow); 
+    }
     .idea-card-title {
       font-family: 'Playfair Display', serif;
       font-size: 1.1rem;
@@ -740,11 +837,35 @@
       color: #b0906a;
       margin-top: 2px;
     }
+    .idea-notes-edit {
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      color: var(--dark-brown);
+      background: #fffbf0;
+      border: 1.5px solid var(--honey);
+      border-radius: 8px;
+      padding: 10px 14px;
+      width: 100%;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.7;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-top: 6px;
+    }
+    .idea-notes-edit:focus {
+      border-color: var(--rust);
+      box-shadow: 0 0 0 3px rgba(192,80,42,0.12);
+    }
 
     /* ── MEAL PLANNER ── */
     .planner-top-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      margin-bottom: 20px; 
+      gap: 12px; 
+      flex-wrap: wrap;
     }
     @media (max-width: 480px) {
       .planner-top-bar {
@@ -776,7 +897,9 @@
       transition: all 0.2s;
     }
     .planner-week-nav button:hover { background: var(--parchment); }
-    .planner-week-nav button.current-week { background: var(--parchment); font-weight: 600; }
+    .planner-week-nav button.current-week { background: var(--parchment); 
+      font-weight: 600; 
+    }
     .planner-week-nav button:disabled {
       opacity: 0.35;
       cursor: not-allowed;
@@ -886,7 +1009,9 @@
     }
     .recipe-bank-list::-webkit-scrollbar { width: 5px; }
     .recipe-bank-list::-webkit-scrollbar-track { background: #f5e9d3; }
-    .recipe-bank-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .recipe-bank-list::-webkit-scrollbar-thumb { background: var(--border); 
+      border-radius: 4px;
+     }
 
     /* Bank source cards — draggable, stay in bank */
     .bank-card {
@@ -968,7 +1093,9 @@
       align-items: flex-start;
       gap: 6px;
     }
-    .bank-card-text { flex: 1; min-width: 0; }
+    .bank-card-text { flex: 1; 
+      min-width: 0; 
+    }
     .bank-card-menu-btn {
       background: none;
       border: none;
@@ -984,8 +1111,9 @@
       letter-spacing: 1px;
     }
     .bank-card:hover .bank-card-menu-btn { opacity: 1; }
-    .bank-card-menu-btn:hover { background: #e8d8c4; opacity: 1; }
-
+    .bank-card-menu-btn:hover { background: #e8d8c4; 
+      opacity: 1; 
+    }
     .bank-card-dropdown {
       display: none;
       position: absolute;
@@ -1028,62 +1156,7 @@
       background: var(--parchment);
       color: var(--rust);
     }
-
-    .planner-favorites {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 3px 14px var(--shadow);
-    }
-    .planner-favorites-header {
-      background: linear-gradient(135deg, #4b6f3f, #35522d);
-      padding: 12px 14px 10px;
-    }
-    .planner-favorites-header h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-    .planner-favorites-header p {
-      font-family: 'Lora', serif;
-      font-style: italic;
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.8);
-    }
-    .planner-favorites-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px 0;
-      font-family: 'Lora', serif;
-      font-size: 0.72rem;
-      color: var(--warm-brown);
-    }
-    .planner-favorites-count {
-      font-weight: 700;
-      color: #3f6a34;
-    }
-    .planner-favorites-list {
-      min-height: 120px;
-      max-height: 329px;
-      overflow-y: auto;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: background 0.15s;
-    }
-    .planner-favorites-list.drag-over {
-      background: #fff8f0;
-      outline: 2px dashed var(--honey);
-      outline-offset: -4px;
-    }
-    .favorite-card.dragging { opacity: 0.4; }
-
+   
     /* ── Board (right panel) ── */
     .planner-board {
       display: grid;
@@ -1270,14 +1343,12 @@
       display: flex; gap: 12px; align-items: center;
       margin-top: 18px; margin-bottom: 20px; flex-wrap: wrap;
     }
-
     @media (max-width: 820px) {
       .planner-layout { grid-template-columns: 1fr; }
       .planner-sidebar { position: static; }
       .recipe-bank-list { max-height: 180px; }
       .planner-favorites-list { max-height: 180px; }
     }
-
     .btn-print-plan {
       font-family: 'Lora', serif;
       font-size: 0.9rem;
@@ -1289,76 +1360,97 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-print-plan:hover { background: var(--parchment); border-color: var(--warm-brown); }
+    .btn-print-plan:hover { 
+      background: var(--parchment); 
+      border-color: var(--warm-brown); 
+    }
 
-    .idea-notes-edit {
+    /* Planner favorites  */
+    .planner-favorites {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 14px var(--shadow);
+    }
+    .planner-favorites-header {
+      background: linear-gradient(135deg, #4b6f3f, #35522d);
+      padding: 12px 14px 10px;
+    }
+    .planner-favorites-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .planner-favorites-header p {
       font-family: 'Lora', serif;
-      font-size: 0.88rem;
-      color: var(--dark-brown);
-      background: #fffbf0;
-      border: 1.5px solid var(--honey);
-      border-radius: 8px;
-      padding: 10px 14px;
-      width: 100%;
-      resize: vertical;
-      min-height: 80px;
-      line-height: 1.7;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      margin-top: 6px;
+      font-style: italic;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.8);
     }
-    .idea-notes-edit:focus {
-      border-color: var(--rust);
-      box-shadow: 0 0 0 3px rgba(192,80,42,0.12);
-    }
-
-    /* ── STEP SWAP ANIMATION ── */
-    .step-swap-up {
-      animation: swapUp 0.35s cubic-bezier(.34,1.56,.64,1);
-    }
-    .step-swap-down {
-      animation: swapDown 0.35s cubic-bezier(.34,1.56,.64,1);
-    }
-    @keyframes swapUp {
-      0%   { transform: translateY(60px); opacity: 0.4; }
-      100% { transform: translateY(0);    opacity: 1; }
-    }
-    @keyframes swapDown {
-      0%   { transform: translateY(-60px); opacity: 0.4; }
-      100% { transform: translateY(0);     opacity: 1; }
-    }
-    .btn-move {
-      background: none;
-      border: 1.5px solid #ddb89a;
+    .planner-favorites-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 0;
+      font-family: 'Lora', serif;
+      font-size: 0.72rem;
       color: var(--warm-brown);
-      border-radius: 6px;
-      width: 30px; height: 30px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.2s;
-      line-height: 1;
     }
-    .btn-move:hover { background: var(--parchment); border-color: var(--warm-brown); }
-    .btn-move:disabled { opacity: 0.25; cursor: default; }
-    .step-move-btns {
+    .planner-favorites-count {
+      font-weight: 700;
+      color: #3f6a34;
+    }
+    .planner-favorites-list {
+      min-height: 120px;
+      max-height: 329px;
+      overflow-y: auto;
+      padding: 8px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      flex-shrink: 0;
+      gap: 6px;
+      transition: background 0.15s;
     }
+    .planner-favorites-list.drag-over {
+      background: #fff8f0;
+      outline: 2px dashed var(--honey);
+      outline-offset: -4px;
+    }
+    .favorite-card.dragging { opacity: 0.4; }
 
-    .drag-handle {
-      cursor: grab;
-      padding: 8px;
-      color: var(--border);
-      font-size: 1.4rem;
+    /* ── ABOUT ── */
+    .about-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; gap: 24px; 
     }
-    .sortable-ghost { 
-      opacity: 0.3; 
-      background: var(--parchment) !important; 
-      border: 1px dashed var(--rust) !important;
+    .about-box {
+      background: var(--parchment);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .about-box h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--warm-brown);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .about-box p { 
+      font-size: 0.92rem; 
+      line-height: 1.7; 
+      color: #5a4030; 
+    }
+    .about-quote {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.6rem;
+      color: var(--rust);
+      padding: 10px 0;
     }
 
     /* ── RESPONSIVE ── */
@@ -1541,39 +1633,6 @@
     </div>
   </section>
 
-  <!-- ── ABOUT TAB ── -->
-  <section id="tab-about" class="section">
-    <div class="card">
-      <h2 class="section-title">About This <span>Recipe Box</span></h2>
-      <p class="section-desc">A little corner of the internet for family and friends to gather around good food.</p>
-
-      <p class="about-quote">"The secret ingredient is always love."</p>
-
-      <div class="about-grid" style="margin-top: 28px;">
-        <div class="about-box">
-          <h3>📖 How to Browse</h3>
-          <p>Head over to the <strong>Browse Recipes</strong> tab to explore all saved recipes. Search by name, filter by category, or filter by who made it to find exactly what you're looking for.</p>
-        </div>
-        <div class="about-box">
-          <h3>✏️ How to Add a Recipe</h3>
-          <p>Click <strong>Add a Recipe</strong>, fill in the details — name, ingredients, and steps — and press Save. Your recipe will appear in the shared collection right away!</p>
-        </div>
-        <div class="about-box">
-          <h3>☁️ Shared in the Cloud</h3>
-          <p>All recipes are stored in a <strong>shared online database</strong>, so everyone sees the same collection no matter what device or browser they use. No sign-in needed!</p>
-        </div>
-        <div class="about-box">
-          <h3>💡 My Ideas</h3>
-          <p>A personal scratchpad saved only on <strong>your device</strong>. Paste links, jot down dishes you want to try, and add notes — nobody else can see these. Capped at 50 ideas to keep your storage light.</p>
-        </div>
-        <div class="about-box" style="grid-column: 1 / -1;">
-          <h3>✏️ Editing & Deleting</h3>
-          <p>Open any recipe card to view it in full. From there you can <strong>edit</strong> any details, <strong>share</strong> a direct link with a friend, <strong>save it as a PDF</strong>, or <strong>delete</strong> it from the collection.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ── IDEAS TAB ── -->
   <section id="tab-ideas" class="section">
     <div class="card" style="margin-bottom: 24px;">
@@ -1633,7 +1692,7 @@
       
       <div class="planner-layout">
       
-        <!-- LEFT: Recipe Bank + Favorites -->
+        <!-- LEFT: Recipe Bank -->
         <div class="planner-sidebar">
           <div class="recipe-bank">
             <div class="recipe-bank-header">
@@ -1676,23 +1735,9 @@
               <div class="bank-empty">Loading recipes…</div>
             </div>
           </div>
-
-          <!-- <div class="planner-favorites">
-            <div class="planner-favorites-header">
-              <h3>💚 My Favorites</h3>
-              <p>Keep up to 10 go-to recipes ready to drop into the week</p>
-            </div>
-            <div class="planner-favorites-meta">
-              <span>Drag here from the bank or weekly plan</span>
-              <span class="planner-favorites-count" id="planner-favorites-count">0 / 10</span>
-            </div>
-            <div class="planner-favorites-list" id="planner-favorites-list">
-              <div class="bank-empty">Loading favorites…</div>
-            </div>
-          </div> -->
         </div>
 
-        <!-- RIGHT: Day columns -->
+        <!-- RIGHT: Day columns + Favorites-->
         <div>
           <div class="planner-board" id="planner-board"></div>
           
@@ -1704,7 +1749,7 @@
           </div>
           <div class="planner-favorites">
             <div class="planner-favorites-header">
-              <h3>💚 My Favorites</h3>
+              <h3>My Favorites</h3>
               <p>Keep up to 10 go-to recipes ready to drop into the week</p>
             </div>
             <div class="planner-favorites-meta">
@@ -1715,6 +1760,39 @@
               <div class="bank-empty">Loading favorites…</div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT TAB ── -->
+  <section id="tab-about" class="section">
+    <div class="card">
+      <h2 class="section-title">About This <span>Recipe Box</span></h2>
+      <p class="section-desc">A little corner of the internet for family and friends to gather around good food.</p>
+
+      <p class="about-quote">"The secret ingredient is always love."</p>
+
+      <div class="about-grid" style="margin-top: 28px;">
+        <div class="about-box">
+          <h3>📖 How to Browse</h3>
+          <p>Head over to the <strong>Browse Recipes</strong> tab to explore all saved recipes. Search by name, filter by category, or filter by who made it to find exactly what you're looking for.</p>
+        </div>
+        <div class="about-box">
+          <h3>✏️ How to Add a Recipe</h3>
+          <p>Click <strong>Add a Recipe</strong>, fill in the details — name, ingredients, and steps — and press Save. Your recipe will appear in the shared collection right away!</p>
+        </div>
+        <div class="about-box">
+          <h3>☁️ Shared in the Cloud</h3>
+          <p>All recipes are stored in a <strong>shared online database</strong>, so everyone sees the same collection no matter what device or browser they use. No sign-in needed!</p>
+        </div>
+        <div class="about-box">
+          <h3>💡 My Ideas</h3>
+          <p>A personal scratchpad saved only on <strong>your device</strong>. Paste links, jot down dishes you want to try, and add notes — nobody else can see these. Capped at 50 ideas to keep your storage light.</p>
+        </div>
+        <div class="about-box" style="grid-column: 1 / -1;">
+          <h3>✏️ Editing & Deleting</h3>
+          <p>Open any recipe card to view it in full. From there you can <strong>edit</strong> any details, <strong>share</strong> a direct link with a friend, <strong>save it as a PDF</strong>, or <strong>delete</strong> it from the collection.</p>
         </div>
       </div>
     </div>
