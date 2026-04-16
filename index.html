@@ -1929,26 +1929,24 @@
   /* ══════════════════════════════════════════
      DYNAMIC FORM ROWS
   ══════════════════════════════════════════ */
-  function addIngredient(value = '') {
+  function addIngredient(value = '') {  //allows user to add a step by adding another div element with an input and button
     const list = document.getElementById('ingredients-list');
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
       <input type="text" placeholder="e.g. 2 cups all-purpose flour" value="${escHtml(value)}">
-      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`;
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>`; // adds button and removes button if clicked
     list.appendChild(row);
   }
 
-  function addStep(value = '') {
+  function addStep(value = '') {  //allows user to add an instruction by adding another div element with an input and button
     const list = document.getElementById('steps-list');
-    const idx = list.children.length + 1;
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
       <div class="drag-handle" title="Drag to reorder">☰</div>
       <textarea placeholder="Step description..." rows="2">${escHtml(value)}</textarea>
-      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button>
-      `;
+      <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">×</button> `; // removes button on-click
     list.appendChild(row);
   }
 
@@ -2363,7 +2361,6 @@
 
   function addEditStep(value = '') {
     const list = document.getElementById('e-steps-list');
-    const idx = list.children.length + 1;
     const row = document.createElement('div');
     row.className = 'list-row';
     row.innerHTML = `
